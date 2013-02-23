@@ -46,6 +46,54 @@ We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
             (setq template "")))))
     (nreverse lexemes)))
 
+(defun mustache/open-section-p (lexeme)
+  "Is LEXEME a #block or ^block ?"
+  (destructuring-bind (type value) lexeme
+    (and (equal type :block)
+         (or
+          (s-starts-with-p "#" value)
+          (s-starts-with-p "^" value)))))
+
+(defun mustache/close-section-p (lexeme)
+  "Is LEXEME a /block ?"
+    (destructuring-bind (type value) lexeme
+    (and (equal type :block)
+         (s-starts-with-p "/" value))))
+
+(defun mustache/parse (lexemes)
+  "Given a list LEXEMES, return a list of lexemes nested according to #blocks or ^blocks."
+  (destructuring-bind (last-index parsed-lexemes)
+                    (mustache/parse-from lexemes 0)
+                    parsed-lexemes))
+
+;; todo: error on unclosed blocks
+;; todo: check for mismatches section open/close
+(defun mustache/parse-from (lexemes start-index)
+  "Given a list LEXEMES and start position START-INDEX,
+return a nested list (last-index, parsed-lexemes)"
+  (let ((parsed-lexemes nil)
+        (index start-index)
+        (keep-parsing 't))
+    (while (and (< index (length lexemes)) keep-parsing)
+      (let ((lexeme (nth index lexemes)))
+        (cond
+         ((mustache/open-section-p lexeme)
+          ;; recurse on this nested section
+          (destructuring-bind (last-index nested-lexemes) (mustache-parse-from lexemes (1+ index))
+            (setq index last-index)
+            (setq parsed-lexemes (cons (cons lexeme nested-lexemes) parsed-lexemes))))
+         ((mustache/close-section-p lexeme)
+          ;; this is the last block in this section
+          (setq parsed-lexemes (cons lexeme parsed-lexemes))
+          (setq index (1+ index))
+          (setq keep-parsing nil))
+         (t
+          ;; this is just a block in the current section          
+          (setq parsed-lexemes (cons lexeme parsed-lexemes))
+          (setq index (1+ index))))))
+    
+    (list index (nreverse parsed-lexemes))))
+
 (defun mustache-render-block (between-delimeters context)
   "Given BETWEEN-DELIMETERS text, render it in hash table CONTEXT."
   (ht-get context between-delimeters))
