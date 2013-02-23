@@ -7,14 +7,14 @@
 ;; todo: add flag to set tolerance of missings variables
 (defun mustache-render (template context)
   "Render a mustache TEMPLATE with hash table CONTEXT."
-  (let* ((lexemes (mustache-lex template))
+  (let* ((lexemes (mustache/lex template))
          (parsed-lexemes (mustache/parse lexemes))
          (rendered ""))
     (dolist (parsed-lexeme parsed-lexemes rendered)
       (setq rendered (s-prepend rendered
                                 (mustache/render-section parsed-lexeme context))))))
 
-(defun mustache-lex (template)
+(defun mustache/lex (template)
   "Iterate through TEMPLATE, splitting {{ blocks }} and bare strings.
 We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
   (let ((open-delimeter "{{")
