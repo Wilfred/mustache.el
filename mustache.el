@@ -7,12 +7,12 @@
 ;; todo: add flag to set tolerance of missings variables
 (defun mustache-render (template context)
   "Render a mustache TEMPLATE with hash table CONTEXT."
-  (let ((rendered ""))
-    (dolist (lexeme (mustache-lex template) rendered)
-      (destructuring-bind (type value) lexeme
-        (if (eq type :text)
-            (setq rendered (s-prepend rendered value))
-          (setq rendered (s-prepend rendered (mustache-render-block value context))))))))
+  (let* ((lexemes (mustache-lex template))
+         (parsed-lexemes (mustache/parse lexemes))
+         (rendered ""))
+    (dolist (parsed-lexeme parsed-lexemes rendered)
+      (setq rendered (s-prepend rendered
+                                (mustache/render-section parsed-lexeme context))))))
 
 (defun mustache-lex (template)
   "Iterate through TEMPLATE, splitting {{ blocks }} and bare strings.
@@ -94,9 +94,29 @@ return a nested list (last-index, parsed-lexemes)"
     
     (list index (nreverse parsed-lexemes))))
 
-(defun mustache-render-block (between-delimeters context)
-  "Given BETWEEN-DELIMETERS text, render it in hash table CONTEXT."
-  (ht-get context between-delimeters))
+(defun mustache/render-block (parsed-block context)
+  "Given PARSED-BLOCK, render it in hash table CONTEXT."
+  (destructuring-bind (type value) parsed-block
+    (ht-get context value)))
+
+(defun mustache/block-p (lexeme)
+  "Is LEXEME a block?"
+  (equal (car lexeme) :block))
+
+(defun mustache/section-p (lexeme)
+  "Is LEXEME a nested section?"
+  (not (atom (car lexeme))))
+
+(defun mustache/render-section (parsed-lexeme context)
+  "Given PARSED-LEXEME -- a lexed block, plain text, or a nested list,
+render it in CONTEXT."
+  (cond ((mustache/section-p parsed-lexeme)
+         "bar")
+        ((mustache/block-p parsed-lexeme)
+         (mustache/render-block parsed-lexeme context))
+        ;; plain text
+        (t
+         (second parsed-lexeme))))
 
 (provide 'mustache)
 ;;; mustache.el ends here
