@@ -124,7 +124,19 @@ FROM or TO may be negative"
   "Given PARSED-LEXEME -- a lexed block, plain text, or a nested list,
 render it in CONTEXT."
   (cond ((mustache/section-p parsed-lexeme)
-         "bar")
+         ;; nested section
+         (let* ((rendered-section "")
+               (section-open (second (first parsed-lexeme)))
+               (section-type (s-left 1 section-open))
+               (section-name (s-chop-prefix section-type section-open))
+               ;; strip section open and close
+               (section-contents (mustache/slice parsed-lexeme 1 -1)))
+           ;; only render #blocks if they're truthy
+           (when (and (s-equals-p "#" section-type)
+                      (ht-get context section-name))
+             (dolist (nested-lexeme section-contents rendered-section)
+               (setq rendered-section (s-prepend rendered-section
+                                                 (mustache/render-section nested-lexeme context)))))))
         ((mustache/block-p parsed-lexeme)
          (mustache/render-block parsed-lexeme context))
         ;; plain text
