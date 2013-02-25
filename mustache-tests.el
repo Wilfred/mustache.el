@@ -13,6 +13,14 @@
       "foo bar"
       (mustache-render "foo {{blah}}" context)))))
 
+(ert-deftest mustache-test-variable-escaped ()
+  (let ((context (ht-create)))
+    (ht-set context "blah" "<bar> &baz ' \"")
+    (should
+     (equal
+      "&lt;bar&gt; &amp;baz &#39; &quot;"
+      (mustache-render "{{blah}}" context)))))
+
 (ert-deftest mustache-test-conditional-true ()
     (let ((context (ht-create)))
       (ht-set context "yes" 't)

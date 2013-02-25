@@ -97,7 +97,7 @@ return a nested list (last-index, parsed-lexemes)"
 (defun mustache/render-block (parsed-block context)
   "Given PARSED-BLOCK, render it in hash table CONTEXT."
   (destructuring-bind (type value) parsed-block
-    (ht-get context value)))
+    (mustache/escape-html (ht-get context value))))
 
 (defun mustache/block-p (lexeme)
   "Is LEXEME a block?"
@@ -142,6 +142,15 @@ render it in CONTEXT."
         ;; plain text
         (t
          (second parsed-lexeme))))
+
+(defun mustache/escape-html (string)
+  "Escape HTML in STRING."
+  (->> string
+    (s-replace "&" "&amp;")
+    (s-replace "<" "&lt;")
+    (s-replace ">" "&gt;")
+    (s-replace "'" "&#39;")
+    (s-replace "\"" "&quot;")))
 
 (provide 'mustache)
 ;;; mustache.el ends here
