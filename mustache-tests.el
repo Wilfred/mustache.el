@@ -21,6 +21,14 @@
         "foo bar"
         (mustache-render "foo {{#yes}}bar{{/yes}}" context)))))
 
+(ert-deftest mustache-test-conditional-false ()
+    (let ((context (ht-create)))
+      (ht-set context "no" nil)
+      (should
+       (equal
+        "foo "
+        (mustache-render "foo {{#no}}bar{{/no}}" context)))))
+
 (defun mustache-run-tests ()
  (interactive)
  (ert-run-tests-interactively "mustache-test-"))
