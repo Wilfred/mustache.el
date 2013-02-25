@@ -2,6 +2,15 @@
 
 GPLv2 licensed.
 
+## Example usage
+
+    (require 'ht) ;; hash table library
+
+    (let ((context (ht-create)))
+      (ht-set context "name" "J. Random user")
+      ;; evaluates to: "Hello J. Random user!"
+      (mustache-render "Hello {{name}}!" context))
+
 ## Other templating projects
 
 * The `format` function (quick and dirty!)
