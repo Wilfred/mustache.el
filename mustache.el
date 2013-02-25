@@ -79,7 +79,7 @@ return a nested list (last-index, parsed-lexemes)"
         (cond
          ((mustache/open-section-p lexeme)
           ;; recurse on this nested section
-          (destructuring-bind (last-index nested-lexemes) (mustache-parse-from lexemes (1+ index))
+          (destructuring-bind (last-index nested-lexemes) (mustache/parse-from lexemes (1+ index))
             (setq index last-index)
             (setq parsed-lexemes (cons (cons lexeme nested-lexemes) parsed-lexemes))))
          ((mustache/close-section-p lexeme)
