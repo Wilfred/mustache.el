@@ -37,6 +37,14 @@
         "foo "
         (mustache-render "foo {{#no}}bar{{/no}}" context)))))
 
+(ert-deftest mustache-test-comment ()
+    (let ((context (ht-create)))
+      (ht-set context "no" nil)
+      (should
+       (equal
+        ""
+        (mustache-render "{{! whatever}}" context)))))
+
 (defun mustache-run-tests ()
  (interactive)
  (ert-run-tests-interactively "mustache-test-"))
