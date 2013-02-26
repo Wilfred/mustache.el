@@ -41,3 +41,5 @@
  (interactive)
  (ert-run-tests-interactively "mustache-test-"))
 
+(provide 'mustache-tests)
+;;; mustache-tests.el ends here
