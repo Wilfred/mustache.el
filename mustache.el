@@ -99,7 +99,7 @@ return a nested list (last-index, parsed-lexemes)"
   (destructuring-bind (type value) parsed-block
     (if (s-starts-with-p "!" value)
         ""
-      (mustache/escape-html (ht-get context value)))))
+      (mustache/escape-html (or (ht-get context value) "")))))
 
 (defun mustache/block-p (lexeme)
   "Is LEXEME a block?"
