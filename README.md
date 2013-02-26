@@ -10,6 +10,10 @@ GPLv2 licensed.
       (ht-set context "name" "J. Random user")
       ;; evaluates to: "Hello J. Random user!"
       (mustache-render "Hello {{name}}!" context))
+      
+## Running tests
+
+M-x mustache-run-tests
 
 ## Other templating projects
 
