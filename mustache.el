@@ -128,11 +128,11 @@ render it in CONTEXT."
   (cond ((mustache/section-p parsed-lexeme)
          ;; nested section
          (let* ((rendered-section "")
-               (section-open (second (first parsed-lexeme)))
-               (section-type (s-left 1 section-open))
-               (section-name (s-chop-prefix section-type section-open))
-               ;; strip section open and close
-               (section-contents (mustache/slice parsed-lexeme 1 -1)))
+                (section-open (second (first parsed-lexeme)))
+                (section-type (s-left 1 section-open))
+                (section-name (s-chop-prefix section-type section-open))
+                ;; strip section open and close
+                (section-contents (mustache/slice parsed-lexeme 1 -1)))
            ;; only render #blocks if they're truthy
            (when (and (s-equals-p "#" section-type)
                       (ht-get context section-name))
