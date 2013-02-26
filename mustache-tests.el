@@ -44,6 +44,14 @@
         "foo "
         (mustache-render "foo {{#no}}bar{{/no}}" context)))))
 
+(ert-deftest mustache-test-inverted ()
+    (let ((context (ht-create)))
+      (ht-set context "no" nil)
+      (should
+       (equal
+        "foo bar"
+        (mustache-render "foo {{^no}}bar{{/no}}" context)))))
+
 (ert-deftest mustache-test-comment ()
     (let ((context (ht-create)))
       (ht-set context "no" nil)
