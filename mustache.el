@@ -136,9 +136,15 @@ render it in CONTEXT."
            ;; only render #blocks if they're truthy
            (when (and (s-equals-p "#" section-type)
                       (ht-get context section-name))
-             (dolist (nested-lexeme section-contents rendered-section)
+             (dolist (nested-lexeme section-contents)
                (setq rendered-section (s-prepend rendered-section
-                                                 (mustache/render-section nested-lexeme context)))))))
+                                                 (mustache/render-section nested-lexeme context)))))
+           (when (and (s-equals-p "^" section-type)
+                      (not (ht-get context section-name)))
+             (dolist (nested-lexeme section-contents)
+               (setq rendered-section (s-prepend rendered-section
+                                                 (mustache/render-section nested-lexeme context)))))
+           rendered-section))
         ((mustache/block-p parsed-lexeme)
          (mustache/render-block parsed-lexeme context))
         ;; plain text
