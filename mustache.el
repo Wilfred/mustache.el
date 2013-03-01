@@ -131,9 +131,12 @@ return a nested list (last-index, parsed-lexemes)"
 (defun mustache/render-block (parsed-block context)
   "Given PARSED-BLOCK, render it in hash table CONTEXT."
   (destructuring-bind (type value) parsed-block
-    (if (s-starts-with-p "!" value)
-        ""
-      (mustache/escape-html (or (ht-get context value) "")))))
+    (cond ((s-starts-with-p "!" value) ;; comment
+           "")
+          ((s-starts-with-p "&" value) ;; unescaped variable
+           (or (ht-get context (s-trim (substring value 1))) ""))
+          (t ;; normal variable
+           (mustache/escape-html (or (ht-get context value) ""))))))
 
 (defun mustache/block-p (lexeme)
   "Is LEXEME a block?"

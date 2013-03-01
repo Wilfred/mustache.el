@@ -36,6 +36,14 @@
       "bob"
       (mustache-render "{{#users}}{{name}}{{/users}}" context)))))
 
+(ert-deftest mustache-test-unescaped ()
+  (let ((context (ht-create)))
+    (ht-set context "blah" "<bar>")
+    (should
+     (equal
+      "<bar>"
+      (mustache-render "{{& blah}}" context)))))
+
 (ert-deftest mustache-test-conditional-true ()
   (let ((context (ht-create)))
     (ht-set context "yes" 't)
