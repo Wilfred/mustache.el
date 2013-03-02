@@ -109,19 +109,6 @@ return a nested list (last-index, parsed-lexemes)"
   "Is LEXEME a nested section?"
   (not (atom (car lexeme))))
 
-;; todo: move to the implementation in dash.el
-(defun mustache/slice (list from &optional to)
-  "Return copy of LIST, starting from index FROM to index TO.
-FROM or TO may be negative"
-  ;; to defaults to the end of the list
-  (setq to (or to (length list)))
-  ;; handle negative indices
-  (when (< from 0)
-    (setq from (mod from (length list))))
-  (when (< to 0)
-    (setq to (mod to (length list))))
-  (-take (- to from) (-drop from list)))
-
 (defun mustache/render-section (parsed-lexeme context)
   "Given PARSED-LEXEME -- a lexed block, plain text, or a nested list,
 render it in CONTEXT."
@@ -132,7 +119,7 @@ render it in CONTEXT."
                 (section-type (s-left 1 section-open))
                 (section-name (s-chop-prefix section-type section-open))
                 ;; strip section open and close
-                (section-contents (mustache/slice parsed-lexeme 1 -1)))
+                (section-contents (-slice parsed-lexeme 1 -1)))
            ;; only render #blocks if they're truthy
            (when (and (s-equals-p "#" section-type)
                       (ht-get context section-name))
