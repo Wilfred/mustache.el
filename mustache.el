@@ -11,8 +11,7 @@
          (parsed-lexemes (mustache/parse lexemes))
          (rendered ""))
     (dolist (parsed-lexeme parsed-lexemes rendered)
-      (setq rendered (s-prepend rendered
-                                (mustache/render-section parsed-lexeme context))))))
+      (mustache/append! (mustache/render-section parsed-lexeme context)))))
 
 (defun mustache/lex (template)
   "Iterate through TEMPLATE, splitting {{ blocks }} and bare strings.
@@ -109,6 +108,10 @@ return a nested list (last-index, parsed-lexemes)"
   "Is LEXEME a nested section?"
   (not (atom (car lexeme))))
 
+(defmacro mustache/append! (var string)
+  "Destructive: sets VAR to the concatenation of VAR and STRING."
+  `(setq ,var (concat ,var ,string)))
+
 (defun mustache/render-section (parsed-lexeme context)
   "Given PARSED-LEXEME -- a lexed block, plain text, or a nested list,
 render it in CONTEXT."
@@ -124,13 +127,11 @@ render it in CONTEXT."
            (when (and (s-equals-p "#" section-type)
                       (ht-get context section-name))
              (dolist (nested-lexeme section-contents)
-               (setq rendered-section (s-prepend rendered-section
-                                                 (mustache/render-section nested-lexeme context)))))
+               (mustache/append! (mustache/render-section nested-lexeme context))))
            (when (and (s-equals-p "^" section-type)
                       (not (ht-get context section-name)))
              (dolist (nested-lexeme section-contents)
-               (setq rendered-section (s-prepend rendered-section
-                                                 (mustache/render-section nested-lexeme context)))))
+               (mustache/append! (mustache/render-section nested-lexeme context))))
            rendered-section))
         ((mustache/block-p parsed-lexeme)
          (mustache/render-block parsed-lexeme context))
