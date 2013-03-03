@@ -23,6 +23,7 @@ M-x mustache-run-tests
 
 ## Changelog
 
+* v0.3 internal refactoring
 * v0.2 added rendering `{{#blocks}}` when the context contains a list
   of hash tables
 * v0.1 basic implementation of a subset of mustache
