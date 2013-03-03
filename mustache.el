@@ -163,7 +163,7 @@ render it in CONTEXT."
             ((s-starts-with-p "#" section-spec)
                   (if (consp context-value)
                       ;; if the context is a list of hash tables, render repeatedly
-                      (-mapcat (lambda (context) (mustache/render-section-list section-contents context)) context-value)
+                      (--mapcat (mustache/render-section-list section-contents it) context-value)
                     ;; otherwise, if it's a truthy value, render in the current context
                     (if context-value
                         (mustache/render-section-list section-contents context)
