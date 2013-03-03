@@ -152,8 +152,7 @@ return a nested list (last-index, parsed-lexemes)"
 render it in CONTEXT."
   (cond ((mustache/section-p parsed-lexeme)
          ;; nested section
-         (let* ((rendered "")
-                ;; section-spec of the form "#foo"
+         (let* (;; section-spec of the form "#foo"
                 (section-spec (second (first parsed-lexeme)))
                 (section-name (substring section-spec 1))
                 (context-value (ht-get context section-name))
@@ -164,15 +163,16 @@ render it in CONTEXT."
             ((s-starts-with-p "#" section-spec)
                   (if (consp context-value)
                       ;; if the context is a list of hash tables, render repeatedly
-                      (dolist (new-context context-value rendered)
-                        (mustache/append! rendered (mustache/render-section-list section-contents new-context)))
+                      (-mapcat (lambda (context) (mustache/render-section-list section-contents context)) context-value)
                     ;; otherwise, if it's a truthy value, render in the current context
                     (if context-value
-                        (mustache/append! rendered (mustache/render-section-list section-contents context)))))
+                        (mustache/render-section-list section-contents context)
+                      "")))
             ;; render ^blocks
             ((s-starts-with-p "^" section-spec)
-             (unless context-value
-                (mustache/append! rendered (mustache/render-section-list section-contents context)))))))
+             (if context-value
+                 ""
+               (mustache/render-section-list section-contents context))))))
         ((mustache/block-p parsed-lexeme)
          (mustache/render-block parsed-lexeme context))
         ;; plain text
