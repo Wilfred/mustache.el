@@ -23,6 +23,7 @@ GPLv2 licensed.
 * `{{> partials}}`
 * `{{{escapedvariables}}}`
 * `{{=different delimeters=}}`
+* Functions in the context
 * Errors on mismatched sections
 * Errors on unclosed sections
 * Errors on unclosed blocks
