@@ -62,8 +62,8 @@ We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
 (defun mustache/parse (lexemes)
   "Given a list LEXEMES, return a list of lexemes nested according to #blocks or ^blocks."
   (destructuring-bind (last-index parsed-lexemes)
-                    (mustache/parse-from lexemes 0)
-                    parsed-lexemes))
+      (mustache/parse-from lexemes 0)
+    parsed-lexemes))
 
 ;; todo: error on unclosed blocks
 ;; todo: check for mismatches section open/close
