@@ -1,3 +1,28 @@
+;;; mustache.el -- a mustache templating library in emacs lisp
+
+;; Copyright (C) 2013 Wilfred Hughes
+
+;; Author: Wilfred Hughes <me@wilfred.me.uk>
+;; Version: 0.1
+;; Keywords: mustache, template
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; See documentation at https://github.com/Wilfred/mustache.el
+
 (require 'ht)
 (require 's)
 (require 'dash)
