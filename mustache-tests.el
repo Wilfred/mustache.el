@@ -28,6 +28,14 @@
       "&lt;bar&gt; &amp;baz &#39; &quot;"
       (mustache-render "{{blah}}" context)))))
 
+(ert-deftest mustache-test-section ()
+    (let ((context (ht-create)))
+      (ht-set context "users" (list (ht-from-plist '("name" "bob"))))
+      (should
+       (equal
+        "bob"
+        (mustache-render "{{#users}}{{name}}{{/users}}" context)))))
+
 (ert-deftest mustache-test-conditional-true ()
     (let ((context (ht-create)))
       (ht-set context "yes" 't)

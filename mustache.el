@@ -3,7 +3,7 @@
 ;; Copyright (C) 2013 Wilfred Hughes
 
 ;; Author: Wilfred Hughes <me@wilfred.me.uk>
-;; Version: 0.1
+;; Version: 0.2
 ;; Keywords: mustache, template
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -158,11 +158,15 @@ render it in CONTEXT."
                 (section-name (s-chop-prefix section-type section-open))
                 ;; strip section open and close
                 (section-contents (-slice parsed-lexeme 1 -1)))
-           ;; only render #blocks if they're truthy
+           ;; render #blocks
            (when (and (s-equals-p "#" section-type)
                       (ht-get context section-name))
-             (dolist (nested-lexeme section-contents)
-               (mustache/append! rendered-section (mustache/render-section nested-lexeme context))))
+             (if (listp (ht-get context section-name))
+                 ;; if the context is a list of hash tables, render repeatedly
+                 (dolist (new-context (ht-get context section-name))
+                         (mustache/append! rendered-section (mustache/render-section-list section-contents new-context)))
+               ;; otherwise, it's a truthy value, so render in the current context
+               (mustache/append! rendered-section (mustache/render-section-list section-contents context))))
            (when (and (s-equals-p "^" section-type)
                       (not (ht-get context section-name)))
              (dolist (nested-lexeme section-contents)
