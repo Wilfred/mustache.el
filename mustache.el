@@ -23,6 +23,11 @@
 
 ;; See documentation at https://github.com/Wilfred/mustache.el
 
+;; Note on terminology: We treat mustache templates as a sequence of
+;; strings (plain text), and blocks (anything wrapped in delimeters:
+;; {{foo}}). A section is a special block that requires closing
+;; (e.g. {{#foo}}{{/foo}}).
+
 (require 'ht)
 (require 's)
 (require 'dash)
