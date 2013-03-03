@@ -29,48 +29,48 @@
       (mustache-render "{{blah}}" context)))))
 
 (ert-deftest mustache-test-section ()
-    (let ((context (ht-create)))
-      (ht-set context "users" (list (ht-from-plist '("name" "bob"))))
-      (should
-       (equal
-        "bob"
-        (mustache-render "{{#users}}{{name}}{{/users}}" context)))))
+  (let ((context (ht-create)))
+    (ht-set context "users" (list (ht-from-plist '("name" "bob"))))
+    (should
+     (equal
+      "bob"
+      (mustache-render "{{#users}}{{name}}{{/users}}" context)))))
 
 (ert-deftest mustache-test-conditional-true ()
-    (let ((context (ht-create)))
-      (ht-set context "yes" 't)
-      (should
-       (equal
-        "foo bar"
-        (mustache-render "foo {{#yes}}bar{{/yes}}" context)))))
+  (let ((context (ht-create)))
+    (ht-set context "yes" 't)
+    (should
+     (equal
+      "foo bar"
+      (mustache-render "foo {{#yes}}bar{{/yes}}" context)))))
 
 (ert-deftest mustache-test-conditional-false ()
-    (let ((context (ht-create)))
-      (ht-set context "no" nil)
-      (should
-       (equal
-        "foo "
-        (mustache-render "foo {{#no}}bar{{/no}}" context)))))
+  (let ((context (ht-create)))
+    (ht-set context "no" nil)
+    (should
+     (equal
+      "foo "
+      (mustache-render "foo {{#no}}bar{{/no}}" context)))))
 
 (ert-deftest mustache-test-inverted ()
-    (let ((context (ht-create)))
-      (ht-set context "no" nil)
-      (should
-       (equal
-        "foo bar"
-        (mustache-render "foo {{^no}}bar{{/no}}" context)))))
+  (let ((context (ht-create)))
+    (ht-set context "no" nil)
+    (should
+     (equal
+      "foo bar"
+      (mustache-render "foo {{^no}}bar{{/no}}" context)))))
 
 (ert-deftest mustache-test-comment ()
-    (let ((context (ht-create)))
-      (ht-set context "no" nil)
-      (should
-       (equal
-        ""
-        (mustache-render "{{! whatever}}" context)))))
+  (let ((context (ht-create)))
+    (ht-set context "no" nil)
+    (should
+     (equal
+      ""
+      (mustache-render "{{! whatever}}" context)))))
 
 (defun mustache-run-tests ()
- (interactive)
- (ert-run-tests-interactively "mustache-test-"))
+  (interactive)
+  (ert-run-tests-interactively "mustache-test-"))
 
 (provide 'mustache-tests)
 ;;; mustache-tests.el ends here
