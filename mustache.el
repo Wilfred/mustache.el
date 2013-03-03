@@ -156,21 +156,20 @@ render it in CONTEXT."
                 ;; section-spec of the form "#foo"
                 (section-spec (second (first parsed-lexeme)))
                 (section-name (substring section-spec 1))
+                (context-value (ht-get context section-name))
                 ;; strip section open and close
                 (section-contents (-slice parsed-lexeme 1 -1)))
            ;; render #blocks
-           (when (and (s-starts-with-p "#" section-spec)
-                      (ht-get context section-name))
-             (if (listp (ht-get context section-name))
+           (when (and (s-starts-with-p "#" section-spec) context-value)
+             (if (listp context-value)
                  ;; if the context is a list of hash tables, render repeatedly
-                 (dolist (new-context (ht-get context section-name))
+                 (dolist (new-context context-value)
                          (mustache/append! rendered (mustache/render-section-list section-contents new-context)))
                ;; otherwise, it's a truthy value, so render in the current context
                (mustache/append! rendered (mustache/render-section-list section-contents context))))
-           (when (and (s-starts-with-p "^" section-spec)
-                      (not (ht-get context section-name)))
-             (dolist (nested-lexeme section-contents)
-               (mustache/append! rendered (mustache/render-section nested-lexeme context))))
+           ;; render ^blocks
+           (when (and (s-starts-with-p "^" section-spec) (not context-value))
+             (mustache/append! rendered (mustache/render-section-list section-contents context)))
            rendered))
         ((mustache/block-p parsed-lexeme)
          (mustache/render-block parsed-lexeme context))
