@@ -40,8 +40,13 @@
   (let* ((lexemes (mustache/lex template))
          (parsed-lexemes (mustache/parse lexemes))
          (rendered ""))
-    (dolist (parsed-lexeme parsed-lexemes rendered)
-      (mustache/append! (mustache/render-section parsed-lexeme context)))))
+    (mustache/render-section-list parsed-lexemes context)))
+
+(defun mustache/render-section-list (sections context)
+  "Render a parsed list SECTIONS in CONTEXT."
+  (let ((rendered ""))
+    (dolist (section sections rendered)
+      (mustache/append! rendered (mustache/render-section section context)))))
 
 (defun mustache/lex (template)
   "Iterate through TEMPLATE, splitting {{ blocks }} and bare strings.
