@@ -159,18 +159,20 @@ render it in CONTEXT."
                 (context-value (ht-get context section-name))
                 ;; strip section open and close
                 (section-contents (-slice parsed-lexeme 1 -1)))
-           ;; render #blocks
-           (when (and (s-starts-with-p "#" section-spec) context-value)
-             (if (listp context-value)
-                 ;; if the context is a list of hash tables, render repeatedly
-                 (dolist (new-context context-value)
-                         (mustache/append! rendered (mustache/render-section-list section-contents new-context)))
-               ;; otherwise, it's a truthy value, so render in the current context
-               (mustache/append! rendered (mustache/render-section-list section-contents context))))
-           ;; render ^blocks
-           (when (and (s-starts-with-p "^" section-spec) (not context-value))
-             (mustache/append! rendered (mustache/render-section-list section-contents context)))
-           rendered))
+           (cond
+            ;; render #blocks
+            ((s-starts-with-p "#" section-spec)
+                  (if (consp context-value)
+                      ;; if the context is a list of hash tables, render repeatedly
+                      (dolist (new-context context-value rendered)
+                        (mustache/append! rendered (mustache/render-section-list section-contents new-context)))
+                    ;; otherwise, if it's a truthy value, render in the current context
+                    (if context-value
+                        (mustache/append! rendered (mustache/render-section-list section-contents context)))))
+            ;; render ^blocks
+            ((s-starts-with-p "^" section-spec)
+             (unless context-value
+                (mustache/append! rendered (mustache/render-section-list section-contents context)))))))
         ((mustache/block-p parsed-lexeme)
          (mustache/render-block parsed-lexeme context))
         ;; plain text
