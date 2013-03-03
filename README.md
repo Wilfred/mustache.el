@@ -11,6 +11,23 @@ GPLv2 licensed.
       ;; evaluates to: "Hello J. Random user!"
       (mustache-render "Hello {{name}}!" context))
       
+## Implemented mustache features
+
+* `{{variables}}`
+* `{{#blocks}}`
+* `{{^blocks}}`
+* `{{& escapedvariables}}`
+
+## Todo:
+
+* `{{> partials}}`
+* `{{{escapedvariables}}}`
+* `{{=different delimeters=}}`
+* Errors on mismatched sections
+* Errors on unclosed sections
+* Errors on unclosed blocks
+* Optional error on missing variables from the context
+      
 ## Running tests
 
 M-x mustache-run-tests
