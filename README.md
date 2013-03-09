@@ -1,6 +1,6 @@
 # mustache.el -- a mustache templating library in Emacs Lisp
 
-GPLv2 licensed.
+Targeting [v.1.0.2](https://github.com/mustache/spec/tree/v1.0.2) of Mustache.
 
 ## Example usage
 
