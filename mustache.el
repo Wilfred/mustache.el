@@ -34,6 +34,9 @@
 
 (eval-when-compile '(require 'cl))
 
+(defvar mustache-template-path nil
+  "Directory to search for .mustache files for partials.")
+
 ;; todo: add flag to set tolerance of missings variables
 (defun mustache-render (template context)
   "Render a mustache TEMPLATE with hash table CONTEXT."
@@ -128,13 +131,28 @@ return a nested list (last-index, parsed-lexemes)"
     
     (list index (nreverse parsed-lexemes))))
 
+(defun mustache/open-file (path)
+  "Open the file PATH and return a string of its contents.
+Errors if the path doesn't exist."
+  (unless (file-exists-p path) (error "No such file: '%s'" path))
+  (with-temp-buffer
+    (insert-file-contents-literally path)
+    (buffer-substring (point-min) (point-max))))
+
+(defun mustache/get-partial (name)
+  "Get the partial template called NAME.mustache in directory `mustache-template-path'."
+  (let (())))
+
 (defun mustache/render-block (parsed-block context)
   "Given PARSED-BLOCK, render it in hash table CONTEXT."
   (destructuring-bind (type value) parsed-block
     (cond ((s-starts-with-p "!" value) ;; comment
            "")
           ((s-starts-with-p "&" value) ;; unescaped variable
-           (or (ht-get context (s-trim (substring value 1))) ""))
+           (or (ht-get context (s-trim (substring value 0))) ""))
+          ((s-starts-with-p ">" value) ;; template inclusion
+           ()
+           (mustache-render ()))
           (t ;; normal variable
            (mustache/escape-html (or (ht-get context value) ""))))))
 

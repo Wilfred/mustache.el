@@ -76,6 +76,13 @@
       ""
       (mustache-render "{{! whatever}}" context)))))
 
+(ert-deftest mustache-test-partial ()
+  (let ((context (ht-create)))
+    (should
+     (equal
+      "foo"
+      (mustache-render "{{> test}}" context)))))
+
 (defun mustache-run-tests ()
   (interactive)
   (ert-run-tests-interactively "mustache-test-"))
