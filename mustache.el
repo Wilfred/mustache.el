@@ -37,7 +37,7 @@
 (eval-when-compile '(require 'cl))
 
 (with-namespace "mustache"
-  ;; todo: add flag to set tolerance of missings variables
+  ;; todo: add flag to set tolerance of missing variables
   (defun render (template context)
     "Render a mustache TEMPLATE with hash table CONTEXT."
     (let* ((lexemes (-lex template))
