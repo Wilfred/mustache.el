@@ -30,10 +30,11 @@
 
 (ert-deftest mustache-test-section ()
   (let ((context (ht-create)))
-    (ht-set context "users" (list (ht-from-plist '("name" "bob"))))
+    (ht-set context "users" (list (ht-from-plist '("name" "bob"))
+                                  (ht-from-plist '("name" "chris"))))
     (should
      (equal
-      "bob"
+      "bobchris"
       (mustache-render "{{#users}}{{name}}{{/users}}" context)))))
 
 (ert-deftest mustache-test-unescaped ()
