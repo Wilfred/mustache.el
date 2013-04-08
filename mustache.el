@@ -41,8 +41,7 @@
   (defun render (template context)
     "Render a mustache TEMPLATE with hash table CONTEXT."
     (let* ((lexemes (-lex template))
-           (parsed-lexemes (-parse lexemes))
-           (rendered ""))
+           (parsed-lexemes (-parse lexemes)))
       (-render-section-list parsed-lexemes context)))
 
   (defun -render-section-list (sections context)
