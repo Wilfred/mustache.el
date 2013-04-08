@@ -46,9 +46,7 @@
 
   (defun -render-section-list (sections context)
     "Render a parsed list SECTIONS in CONTEXT."
-    (let ((rendered ""))
-      (dolist (section sections rendered)
-        (-append! rendered (-render-section section context)))))
+    (-amapconcat (-render-section it context) sections))
 
   (defun -lex (template)
     "Iterate through TEMPLATE, splitting {{ blocks }} and bare strings.
@@ -148,9 +146,13 @@ return a nested list (last-index, parsed-lexemes)"
     "Is LEXEME a nested section?"
     (not (atom (car lexeme))))
 
-  (defmacro -append! (var string)
-    "Destructive: sets VAR to the concatenation of VAR and STRING."
-    `(setq ,var (concat ,var ,string)))
+  (defun -mapconcat (function sequence)
+    "Apply FUNCTION to every element in SEQUENCE, and concat the results as strings."
+    (mapconcat function sequence ""))
+
+  (defmacro -amapconcat (form sequence)
+    "Anaphoric version of `mustache--mapconcat'."
+    `(-mapconcat (lambda (it) ,form) ,sequence))
 
   (defun -render-section (parsed-lexeme context)
     "Given PARSED-LEXEME -- a lexed block, plain text, or a nested list,
@@ -168,7 +170,7 @@ render it in CONTEXT."
               ((s-starts-with-p "#" section-spec)
                (if (consp context-value)
                    ;; if the context is a list of hash tables, render repeatedly
-                   (--mapcat (-render-section-list section-contents it) context-value)
+                   (-amapconcat (-render-section-list section-contents it) context-value)
                  ;; otherwise, if it's a truthy value, render in the current context
                  (if context-value
                      (-render-section-list section-contents context)
