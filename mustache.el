@@ -50,6 +50,22 @@
            (parsed-lexemes (-parse lexemes)))
       (-render-section-list parsed-lexemes context)))
 
+  (defvar partial-paths nil
+    "A list of paths to be searched for mustache partial templates (files ending .mustache).")
+
+  ;; todo: set flag to set tolerance of missing templates
+  (defun -get-partial (name)
+    "Get the first partial whose file name is NAME.mustache, or \"\" otherwise.
+Partials are searched for in `mustache-partial-paths'."
+    (let ((partial-name (format "%s.mustache" name)))
+      (dolist (path partial-paths)
+        (let* ((partials (directory-files path nil "\\.mustache$"))
+               (matching-partial (--first
+                                  (string-match-p (regexp-quote partial-name) it)
+                                  partials))))
+        (when matching-partial
+          (return (concat (file-name-as-directory path) matching-partial))))))
+
   (defun -render-section-list (sections context)
     "Render a parsed list SECTIONS in CONTEXT."
     (-amapconcat (-render-section it context) sections))
