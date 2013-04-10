@@ -29,6 +29,12 @@
 ;; {{foo}}). A section is a special block that requires closing
 ;; (e.g. {{#foo}}{{/foo}}).
 
+;; We treat mustache templates as if they conform to a rough grammar:
+
+;; TEMPLATE = plaintext | BLOCK | SECTION | TEMPLATE
+;; SECTION = OPEN-BLOCK TEMPLATE CLOSE-BLOCK
+;; BLOCK = "{{" text "}}"
+
 (require 'ht)
 (require 's)
 (require 'dash)
