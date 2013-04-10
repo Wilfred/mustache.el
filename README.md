@@ -40,7 +40,7 @@ M-x mustache-run-tests
 
 ## Changelog
 
-* v0.4 internal functions are now named mustach--foo instead of
+* v0.4 internal functions are now named mustache--foo instead of
   mustache/foo due to use of the `with-namespace` macro
 * v0.3 internal refactoring
 * v0.2 added rendering `{{#blocks}}` when the context contains a list
