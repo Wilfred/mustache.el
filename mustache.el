@@ -139,7 +139,7 @@ return a nested list (last-index, parsed-lexemes)"
             ;; recurse on this nested section
             (destructuring-bind (last-index nested-lexemes) (-parse-from lexemes (1+ index))
               (setq index last-index)
-              (setq parsed-lexemes (cons (cons lexeme nested-lexemes) parsed-lexemes))))
+              (!cons (cons lexeme nested-lexemes) parsed-lexemes)))
            ((-close-section-p lexeme)
             ;; this is the last block in this section
             (setq parsed-lexemes (cons lexeme parsed-lexemes))
@@ -147,7 +147,7 @@ return a nested list (last-index, parsed-lexemes)"
             (return))
            (t
             ;; this is just a block in the current section          
-            (setq parsed-lexemes (cons lexeme parsed-lexemes))
+            (!cons lexeme parsed-lexemes)
             (setq index (1+ index))))))
       
       (list index (nreverse parsed-lexemes))))
