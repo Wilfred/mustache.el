@@ -126,7 +126,7 @@ We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
       parsed-lexemes))
 
   ;; todo: error on unclosed blocks
-  ;; todo: check for mismatches section open/close
+  ;; todo: check for mismatched section open/close
   (defun -parse-from (lexemes start-index)
     "Given a list LEXEMES and start position START-INDEX,
 return a nested list (last-index, parsed-lexemes)"
