@@ -34,6 +34,15 @@
       "bobchris"
       (mustache-render "{{#users}}{{name}}{{/users}}" context)))))
 
+(ert-deftest mustache-test-section-with-vector ()
+  "Vectors should behave the same as a list in a context."
+  (let ((context (ht ("users" `[,(ht ("name" "bob"))
+                                ,(ht ("name" "chris"))]))))
+    (should
+     (equal
+      "bobchris"
+      (mustache-render "{{#users}}{{name}}{{/users}}" context)))))
+
 (ert-deftest mustache-test-unescaped ()
   (let ((context (ht ("blah" "<bar>"))))
     (should

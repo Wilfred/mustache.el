@@ -40,6 +40,9 @@ Targeting [v.1.0.2](https://github.com/mustache/spec/tree/v1.0.2) of Mustache.
 
 ## Changelog
 
+* v0.6 `{{#blocks}}` now optionally support using vectors instead of
+  lists
+* v0.5 added rendering of `{{{blocks}}}`
 * v0.4 internal functions are now named mustache--foo instead of
   mustache/foo due to use of the `with-namespace` macro
 * v0.3 internal refactoring
