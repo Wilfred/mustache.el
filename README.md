@@ -30,7 +30,7 @@ Targeting [v.1.0.2](https://github.com/mustache/spec/tree/v1.0.2) of Mustache.
       
 ## Running tests
 
-M-x mustache-run-tests
+    M-x mustache-run-tests
 
 ## Other templating projects
 
