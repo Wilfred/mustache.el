@@ -16,11 +16,11 @@ Targeting [v.1.0.2](https://github.com/mustache/spec/tree/v1.0.2) of Mustache.
 * `{{#blocks}}`
 * `{{^blocks}}`
 * `{{& escapedvariables}}`
+* `{{{escapedvariables}}}`
 
 ## Todo:
 
 * `{{> partials}}`
-* `{{{escapedvariables}}}`
 * `{{=different delimeters=}}`
 * Functions in the context
 * Errors on mismatched sections

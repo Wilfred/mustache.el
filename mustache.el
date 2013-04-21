@@ -3,7 +3,7 @@
 ;; Copyright (C) 2013 Wilfred Hughes
 
 ;; Author: Wilfred Hughes <me@wilfred.me.uk>
-;; Version: 0.4
+;; Version: 0.5
 ;; Keywords: mustache, template
 ;; Package-Requires: ((ht "0.8") (s "1.3.0") (dash "1.1.0") (with-namespace "1.1"))
 
@@ -73,6 +73,9 @@ Partials are searched for in `mustache-partial-paths'."
   (defun -lex (template)
     "Iterate through TEMPLATE, splitting {{ blocks }} and bare strings.
 We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
+    ;; convert {{{foo}}} to {{&foo}}
+    (setq template (replace-regexp-in-string "{{{\\(.*?\\)}}}" "{{& \\1}}" template))
+    
     (let ((open-delimeter "{{")
           (close-delimeter "}}")
           (lexemes nil))
