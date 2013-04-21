@@ -131,9 +131,8 @@ We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
     "Given a list LEXEMES and start position START-INDEX,
 return a nested list (last-index, parsed-lexemes)"
     (let ((parsed-lexemes nil)
-          (index start-index)
-          (keep-parsing 't))
-      (while (and (< index (length lexemes)) keep-parsing)
+          (index start-index))
+      (loop while (< index (length lexemes)) do
         (let ((lexeme (nth index lexemes)))
           (cond
            ((-open-section-p lexeme)
@@ -145,7 +144,7 @@ return a nested list (last-index, parsed-lexemes)"
             ;; this is the last block in this section
             (setq parsed-lexemes (cons lexeme parsed-lexemes))
             (setq index (1+ index))
-            (setq keep-parsing nil))
+            (return))
            (t
             ;; this is just a block in the current section          
             (setq parsed-lexemes (cons lexeme parsed-lexemes))
