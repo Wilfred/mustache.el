@@ -40,7 +40,7 @@
 (require 'dash)
 (require 'with-namespace)
 
-(eval-when-compile '(require 'cl)) ;; destructuring-bind
+(eval-when-compile '(require 'cl)) ;; destructuring-bind, loop, return
 
 (with-namespace "mustache"
   ;; todo: add flag to set tolerance of missing variables
