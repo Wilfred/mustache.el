@@ -41,6 +41,13 @@
       "<bar>"
       (mustache-render "{{& blah}}" context)))))
 
+(ert-deftest mustache-test-triple-mustache ()
+  (let ((context (ht ("blah" "<bar>"))))
+    (should
+     (equal
+      "<bar>"
+      (mustache-render "{{{blah}}}" context)))))
+
 (ert-deftest mustache-test-conditional-true ()
   (let ((context (ht ("yes" 't))))
     (should
