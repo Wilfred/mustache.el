@@ -119,38 +119,30 @@ We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
       (and (equal type :block)
            (s-starts-with-p "/" value))))
 
-  (defun -parse (lexemes)
-    "Given a list LEXEMES, return a list of lexemes nested according to #blocks or ^blocks."
-    (destructuring-bind (last-index parsed-lexemes)
-        (-parse-from lexemes 0)
-      parsed-lexemes))
+  (defvar remaining-lexemes nil
+    "Since `mustache--parse' recursively calls itself, we need a shared value to mutate.")
 
   ;; todo: error on unclosed blocks
   ;; todo: check for mismatched section open/close
-  (defun -parse-from (lexemes start-index)
-    "Given a list LEXEMES and start position START-INDEX,
-return a nested list (last-index, parsed-lexemes)"
-    (let ((parsed-lexemes nil)
-          (index start-index))
-      (loop while (< index (length lexemes)) do
-        (let ((lexeme (nth index lexemes)))
+  (defun -parse (lexemes)
+    "Given a list LEXEMES, return a list of lexemes nested according to #blocks or ^blocks."
+    (setq remaining-lexemes lexemes)
+    (let ((parsed-lexemes nil))
+      (loop while remaining-lexemes do
+        (let ((lexeme (pop remaining-lexemes)))
           (cond
            ((-open-section-p lexeme)
             ;; recurse on this nested section
-            (destructuring-bind (last-index nested-lexemes) (-parse-from lexemes (1+ index))
-              (setq index last-index)
-              (!cons (cons lexeme nested-lexemes) parsed-lexemes)))
+            (!cons (cons lexeme (-parse remaining-lexemes)) parsed-lexemes))
            ((-close-section-p lexeme)
             ;; this is the last block in this section
             (setq parsed-lexemes (cons lexeme parsed-lexemes))
-            (setq index (1+ index))
             (return))
            (t
             ;; this is just a block in the current section          
-            (!cons lexeme parsed-lexemes)
-            (setq index (1+ index))))))
+            (!cons lexeme parsed-lexemes)))))
       
-      (list index (nreverse parsed-lexemes))))
+      (nreverse parsed-lexemes)))
 
   (defun -render-block (parsed-block context)
     "Given PARSED-BLOCK, render it in hash table CONTEXT."
