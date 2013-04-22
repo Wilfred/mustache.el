@@ -73,7 +73,7 @@ Partials are searched for in `mustache-partial-paths'."
   (defun -lex (template)
     "Iterate through TEMPLATE, splitting {{ blocks }} and bare strings.
 We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
-    ;; convert {{{foo}}} to {{&foo}}
+    ;; convert {{{foo}}} to {{& foo}}
     (setq template (replace-regexp-in-string "{{{\\(.*?\\)}}}" "{{& \\1}}" template))
     
     (let ((open-delimeter "{{")
