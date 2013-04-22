@@ -119,12 +119,16 @@ We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
       (and (equal type :block)
            (s-starts-with-p "/" value))))
 
+  (defun -section-name (lexeme)
+    "Get the name of the section from LEXEME, a two part list returned by `mustache--lex'."
+    (cadr lexeme))
+
   (defvar remaining-lexemes nil
     "Since `mustache--parse' recursively calls itself, we need a shared value to mutate.")
 
   ;; todo: error on unclosed blocks
   ;; todo: check for mismatched section open/close
-  (defun -parse (lexemes)
+  (defun -parse (lexemes &optional section-name)
     "Given a list LEXEMES, return a list of lexemes nested according to #blocks or ^blocks."
     (setq remaining-lexemes lexemes)
     (let ((parsed-lexemes nil))
@@ -133,9 +137,11 @@ We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
           (cond
            ((-open-section-p lexeme)
             ;; recurse on this nested section
-            (!cons (cons lexeme (-parse remaining-lexemes)) parsed-lexemes))
+            (!cons (cons lexeme (-parse remaining-lexemes (-section-name lexeme))) parsed-lexemes))
            ((-close-section-p lexeme)
             ;; this is the last block in this section
+            (unless section-name
+              (error "Mismatched brackets: You closed a section with %s, but it wasn't open" section-name))
             (!cons lexeme parsed-lexemes)
             (return))
            (t

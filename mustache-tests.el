@@ -19,9 +19,9 @@
       "foo "
       (mustache-render "foo {{blah}}" context)))))
 
-(ert-deftest mustache-test-unclosed-section ()
+(ert-deftest mustache-test-extra-section-close ()
   (should-error
-   (mustache-render "{{#blah}}" (ht-create))))
+   (mustache-render "{{/blah}}" (ht-create))))
 
 (ert-deftest mustache-test-variable-escaped ()
   (let ((context (ht ("blah" "<bar> &baz ' \""))))
