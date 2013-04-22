@@ -136,7 +136,7 @@ We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
             (!cons (cons lexeme (-parse remaining-lexemes)) parsed-lexemes))
            ((-close-section-p lexeme)
             ;; this is the last block in this section
-            (setq parsed-lexemes (cons lexeme parsed-lexemes))
+            (!cons lexeme parsed-lexemes)
             (return))
            (t
             ;; this is just a block in the current section          
