@@ -39,6 +39,8 @@ Targeting [v.1.0.2](https://github.com/mustache/spec/tree/v1.0.2) of Mustache.
 
 ## Changelog
 
+* v0.8 Removed dependency on `with-namespace` in favour of internal
+  functions/variables being of the form `mst--foo`.
 * v0.7 templates with malformed sections now throw an error. For
   example: `{{#foo}}{{/bar}}` and `{{#foo}}`.
 * v0.6 `{{#blocks}}` now optionally support using vectors instead of
