@@ -123,21 +123,25 @@ We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
     "Get the name of the section from LEXEME, a two part list returned by `mustache--lex'."
     (cadr lexeme))
 
-  (defvar remaining-lexemes nil
+  (defvar -remaining-lexemes nil
     "Since `mustache--parse' recursively calls itself, we need a shared value to mutate.")
 
   ;; todo: error on unclosed blocks
   ;; todo: check for mismatched section open/close
-  (defun -parse (lexemes &optional section-name)
+  (defun -parse (lexemes)
     "Given a list LEXEMES, return a list of lexemes nested according to #blocks or ^blocks."
-    (setq remaining-lexemes lexemes)
+    (setq -remaining-lexemes lexemes)
+    (-parse-inner))
+
+  (defun -parse-inner (&optional section-name)
+    "Parse `mustache--remaining-lexemes', and return a list of lexemes nested according to #blocks or ^blocks."
     (let ((parsed-lexemes nil))
-      (loop while remaining-lexemes do
-        (let ((lexeme (pop remaining-lexemes)))
+      (loop while -remaining-lexemes do
+        (let ((lexeme (pop -remaining-lexemes)))
           (cond
            ((-open-section-p lexeme)
             ;; recurse on this nested section
-            (!cons (cons lexeme (-parse remaining-lexemes (-section-name lexeme))) parsed-lexemes))
+            (!cons (cons lexeme (-parse-inner (-section-name lexeme))) parsed-lexemes))
            ((-close-section-p lexeme)
             ;; this is the last block in this section
             (unless section-name
