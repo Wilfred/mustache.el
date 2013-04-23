@@ -25,15 +25,15 @@
 ;; See documentation at https://github.com/Wilfred/mustache.el
 
 ;; Note on terminology: We treat mustache templates as a sequence of
-;; strings (plain text), and blocks (anything wrapped in delimeters:
-;; {{foo}}). A section is a special block that requires closing
+;; strings (plain text), and tags (anything wrapped in delimeters:
+;; {{foo}}). A section is a special tag that requires closing
 ;; (e.g. {{#foo}}{{/foo}}).
 
 ;; We treat mustache templates as if they conform to a rough grammar:
 
-;; TEMPLATE = plaintext | BLOCK | SECTION | TEMPLATE
-;; SECTION = OPEN-BLOCK TEMPLATE CLOSE-BLOCK
-;; BLOCK = "{{" text "}}"
+;; TEMPLATE = plaintext | TAG | SECTION | TEMPLATE
+;; SECTION = OPEN-TAG TEMPLATE CLOSE-TAG
+;; TAG = "{{" text "}}"
 
 ;; Public functions are of the form `mustache-FOO`, private
 ;; functions/variables are of the form `mst--FOO`.
@@ -72,8 +72,8 @@ Partials are searched for in `mustache-partial-paths'."
   (mst--amapconcat (mst--render-section it context) sections))
 
 (defun mst--lex (template)
-  "Iterate through TEMPLATE, splitting {{ blocks }} and bare strings.
-We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
+  "Iterate through TEMPLATE, splitting {{ tags }} and bare strings.
+We return a list of lists: ((:text \"foo\") (:tag \"variable-name\"))"
   ;; convert {{{foo}}} to {{& foo}}
   (setq template (replace-regexp-in-string "{{{\\(.*?\\)}}}" "{{& \\1}}" template))
   
@@ -86,16 +86,16 @@ We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
         ;; todo: check open-index < close-index
         ;; todo: error if we have an open and no close
         (if (and open-index close-index)
-            ;; we have a block
+            ;; we have a tag
             (let ((between-delimeters
                    (substring template (+ open-index (length open-delimeter)) close-index))
                   (continue-from-index (+ close-index (length close-delimeter))))
-              ;; save the string before the block
+              ;; save the string before the tag
               (when (> open-index 0)
                 (push (list :text (substring template 0 open-index)) lexemes))
               
-              ;; save this block
-              (push (list :block between-delimeters) lexemes)
+              ;; save this tag
+              (push (list :tag between-delimeters) lexemes)
               
               ;; iterate on the remaining template
               (setq template
@@ -107,17 +107,17 @@ We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
     (nreverse lexemes)))
 
 (defun mst--open-section-p (lexeme)
-  "Is LEXEME a #block or ^block ?"
+  "Is LEXEME a #tag or ^tag ?"
   (destructuring-bind (type value) lexeme
-    (and (equal type :block)
+    (and (equal type :tag)
          (or
           (s-starts-with-p "#" value)
           (s-starts-with-p "^" value)))))
 
 (defun mst--close-section-p (lexeme)
-  "Is LEXEME a /block ?"
+  "Is LEXEME a /tag ?"
   (destructuring-bind (type value) lexeme
-    (and (equal type :block)
+    (and (equal type :tag)
          (s-starts-with-p "/" value))))
 
 (defun mst--section-name (lexeme)
@@ -129,12 +129,12 @@ The leading character (the #, ^ or /) is stripped."
   "Since `mst--parse-inner' recursively calls itself, we need a shared value to mutate.")
 
 (defun mst--parse (lexemes)
-  "Given a list LEXEMES, return a list of lexemes nested according to #blocks or ^blocks."
+  "Given a list LEXEMES, return a list of lexemes nested according to #tags or ^tags."
   (setq mst--remaining-lexemes lexemes)
   (mst--parse-inner))
 
 (defun mst--parse-inner (&optional section-name)
-  "Parse `mst--remaining-lexemes', and return a list of lexemes nested according to #blocks or ^blocks."
+  "Parse `mst--remaining-lexemes', and return a list of lexemes nested according to #tags or ^tags."
   (let (parsed-lexemes
         lexeme)
     (loop while mst--remaining-lexemes do
@@ -144,13 +144,13 @@ The leading character (the #, ^ or /) is stripped."
             ;; recurse on this nested section
             (push (cons lexeme (mst--parse-inner (mst--section-name lexeme))) parsed-lexemes))
            ((mst--close-section-p lexeme)
-            ;; this is the last block in this section
+            ;; this is the last tag in this section
             (unless (equal section-name (mst--section-name lexeme))
               (error "Mismatched brackets: You closed a section with %s, but it wasn't open" section-name))
             (push lexeme parsed-lexemes)
             (return))
            (t
-            ;; this is just a block in the current section
+            ;; this is just a tag in the current section
             (push lexeme parsed-lexemes))))
 
     ;; ensure we aren't inside an unclosed section
@@ -159,9 +159,9 @@ The leading character (the #, ^ or /) is stripped."
 
     (nreverse parsed-lexemes)))
 
-(defun mst--render-block (parsed-block context)
-  "Given PARSED-BLOCK, render it in hash table CONTEXT."
-  (destructuring-bind (type value) parsed-block
+(defun mst--render-tag (parsed-tag context)
+  "Given PARSED-TAG, render it in hash table CONTEXT."
+  (destructuring-bind (type value) parsed-tag
     (cond ((s-starts-with-p "!" value) ;; comment
            "")
           ((s-starts-with-p "&" value) ;; unescaped variable
@@ -169,9 +169,9 @@ The leading character (the #, ^ or /) is stripped."
           (t ;; normal variable
            (mst--escape-html (or (ht-get context value) ""))))))
 
-(defun mst--block-p (lexeme)
-  "Is LEXEME a block?"
-  (equal (car lexeme) :block))
+(defun mst--tag-p (lexeme)
+  "Is LEXEME a tag?"
+  (equal (car lexeme) :tag))
 
 (defun mst--section-p (lexeme)
   "Is LEXEME a nested section?"
@@ -186,7 +186,7 @@ The leading character (the #, ^ or /) is stripped."
   `(mst--mapconcat (lambda (it) ,form) ,sequence))
 
 (defun mst--render-section (parsed-lexeme context)
-  "Given PARSED-LEXEME -- a lexed block, plain text, or a nested list,
+  "Given PARSED-LEXEME -- a lexed tag, plain text, or a nested list,
 render it in CONTEXT."
   (cond ((mst--section-p parsed-lexeme)
          ;; nested section
@@ -197,7 +197,7 @@ render it in CONTEXT."
                 ;; strip section open and close
                 (section-contents (-slice parsed-lexeme 1 -1)))
            (cond
-            ;; render #blocks
+            ;; render #tags
             ((s-starts-with-p "#" section-spec)
              (if (or (consp context-value) (vectorp context-value))
                  ;; if the context is a list of hash tables, render repeatedly
@@ -206,13 +206,13 @@ render it in CONTEXT."
                (if context-value
                    (mst--render-section-list section-contents context)
                  "")))
-            ;; render ^blocks
+            ;; render ^tags
             ((s-starts-with-p "^" section-spec)
              (if context-value
                  ""
                (mst--render-section-list section-contents context))))))
-        ((mst--block-p parsed-lexeme)
-         (mst--render-block parsed-lexeme context))
+        ((mst--tag-p parsed-lexeme)
+         (mst--render-tag parsed-lexeme context))
         ;; plain text
         (t
          (second parsed-lexeme))))
