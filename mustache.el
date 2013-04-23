@@ -126,7 +126,6 @@ We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
   (defvar -remaining-lexemes nil
     "Since `mustache--parse' recursively calls itself, we need a shared value to mutate.")
 
-  ;; todo: error on unclosed blocks
   ;; todo: check for mismatched section open/close
   (defun -parse (lexemes)
     "Given a list LEXEMES, return a list of lexemes nested according to #blocks or ^blocks."
@@ -135,23 +134,28 @@ We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
 
   (defun -parse-inner (&optional section-name)
     "Parse `mustache--remaining-lexemes', and return a list of lexemes nested according to #blocks or ^blocks."
-    (let ((parsed-lexemes nil))
+    (let (parsed-lexemes
+          lexeme)
       (loop while -remaining-lexemes do
-        (let ((lexeme (pop -remaining-lexemes)))
-          (cond
-           ((-open-section-p lexeme)
-            ;; recurse on this nested section
-            (!cons (cons lexeme (-parse-inner (-section-name lexeme))) parsed-lexemes))
-           ((-close-section-p lexeme)
-            ;; this is the last block in this section
-            (unless section-name
-              (error "Mismatched brackets: You closed a section with %s, but it wasn't open" section-name))
-            (!cons lexeme parsed-lexemes)
-            (return))
-           (t
-            ;; this is just a block in the current section          
-            (!cons lexeme parsed-lexemes)))))
-      
+        (setq lexeme (pop -remaining-lexemes))
+        (cond
+         ((-open-section-p lexeme)
+          ;; recurse on this nested section
+          (!cons (cons lexeme (-parse-inner (-section-name lexeme))) parsed-lexemes))
+         ((-close-section-p lexeme)
+          ;; this is the last block in this section
+          (unless section-name
+            (error "Mismatched brackets: You closed a section with %s, but it wasn't open" section-name))
+          (!cons lexeme parsed-lexemes)
+          (return))
+         (t
+          ;; this is just a block in the current section
+          (!cons lexeme parsed-lexemes))))
+
+      ;; ensure we aren't inside an unclosed section
+      (when (and section-name (not (-close-section-p lexeme)))
+        (error "Unclosed section: You haven't closed %s" section-name))
+
       (nreverse parsed-lexemes)))
 
   (defun -render-block (parsed-block context)
