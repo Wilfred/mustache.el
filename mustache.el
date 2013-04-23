@@ -91,17 +91,17 @@ We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
                     (continue-from-index (+ close-index (length close-delimeter))))
                 ;; save the string before the block
                 (when (> open-index 0)
-                  (!cons (list :text (substring template 0 open-index)) lexemes))
+                  (push (list :text (substring template 0 open-index)) lexemes))
                 
                 ;; save this block
-                (!cons (list :block between-delimeters) lexemes)
+                (push (list :block between-delimeters) lexemes)
                 
                 ;; iterate on the remaining template
                 (setq template
                       (substring template continue-from-index)))
             ;; else only plain text left
             (progn
-              (!cons (list :text template) lexemes)
+              (push (list :text template) lexemes)
               (setq template "")))))
       (nreverse lexemes)))
 
@@ -141,16 +141,16 @@ The leading character (the #, ^ or /) is stripped."
         (cond
          ((-open-section-p lexeme)
           ;; recurse on this nested section
-          (!cons (cons lexeme (-parse-inner (-section-name lexeme))) parsed-lexemes))
+          (push (cons lexeme (-parse-inner (-section-name lexeme))) parsed-lexemes))
          ((-close-section-p lexeme)
           ;; this is the last block in this section
           (unless (equal section-name (-section-name lexeme))
             (error "Mismatched brackets: You closed a section with %s, but it wasn't open" section-name))
-          (!cons lexeme parsed-lexemes)
+          (push lexeme parsed-lexemes)
           (return))
          (t
           ;; this is just a block in the current section
-          (!cons lexeme parsed-lexemes))))
+          (push lexeme parsed-lexemes))))
 
       ;; ensure we aren't inside an unclosed section
       (when (and section-name (not (-close-section-p lexeme)))
