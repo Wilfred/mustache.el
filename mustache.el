@@ -3,7 +3,7 @@
 ;; Copyright (C) 2013 Wilfred Hughes
 
 ;; Author: Wilfred Hughes <me@wilfred.me.uk>
-;; Version: 0.6
+;; Version: 0.7
 ;; Keywords: mustache, template
 ;; Package-Requires: ((ht "0.8") (s "1.3.0") (dash "1.1.0") (with-namespace "1.1"))
 
@@ -120,13 +120,13 @@ We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
            (s-starts-with-p "/" value))))
 
   (defun -section-name (lexeme)
-    "Get the name of the section from LEXEME, a two part list returned by `mustache--lex'."
-    (cadr lexeme))
+    "Get the name of the section from LEXEME, a two part list returned by `mustache--lex'.
+The leading character (the #, ^ or /) is stripped."
+    (s-chop-prefixes '("#" "^" "/") (cadr lexeme)))
 
   (defvar -remaining-lexemes nil
     "Since `mustache--parse' recursively calls itself, we need a shared value to mutate.")
 
-  ;; todo: check for mismatched section open/close
   (defun -parse (lexemes)
     "Given a list LEXEMES, return a list of lexemes nested according to #blocks or ^blocks."
     (setq -remaining-lexemes lexemes)
@@ -144,7 +144,7 @@ We return a list of lists: ((:text \"foo\") (:block \"variable-name\"))"
           (!cons (cons lexeme (-parse-inner (-section-name lexeme))) parsed-lexemes))
          ((-close-section-p lexeme)
           ;; this is the last block in this section
-          (unless section-name
+          (unless (equal section-name (-section-name lexeme))
             (error "Mismatched brackets: You closed a section with %s, but it wasn't open" section-name))
           (!cons lexeme parsed-lexemes)
           (return))

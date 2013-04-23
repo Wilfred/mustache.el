@@ -27,6 +27,10 @@
   (should-error
    (mustache-render "{{#blah}}" (ht-create))))
 
+(ert-deftest mustache-test-mismatched-section-close ()
+  (should-error
+   (mustache-render "{{#blah}}{{/foo}}" (ht-create))))
+
 (ert-deftest mustache-test-variable-escaped ()
   (let ((context (ht ("blah" "<bar> &baz ' \""))))
     (should

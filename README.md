@@ -17,14 +17,13 @@ Targeting [v.1.0.2](https://github.com/mustache/spec/tree/v1.0.2) of Mustache.
 * `{{^blocks}}`
 * `{{& escapedvariables}}`
 * `{{{escapedvariables}}}`
+* Errors on invalid templates (forgetting to close open sections etc)
 
 ## Todo:
 
 * `{{> partials}}`
 * `{{=different delimeters=}}`
 * Functions in the context
-* Errors on mismatched sections
-* Errors on unclosed sections
 * Errors on unclosed blocks
 * Optional error on missing variables from the context
       
@@ -40,6 +39,8 @@ Targeting [v.1.0.2](https://github.com/mustache/spec/tree/v1.0.2) of Mustache.
 
 ## Changelog
 
+* v0.7 templates with malformed sections now throw an error. For
+  example: `{{#foo}}{{/bar}}` and `{{#foo}}`.
 * v0.6 `{{#blocks}}` now optionally support using vectors instead of
   lists
 * v0.5 added rendering of `{{{blocks}}}`
