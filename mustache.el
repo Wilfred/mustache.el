@@ -199,13 +199,14 @@ render it in CONTEXT."
            (cond
             ;; render #tags
             ((s-starts-with-p "#" section-spec)
-             (if (or (consp context-value) (vectorp context-value))
-                 ;; if the context is a list of hash tables, render repeatedly
-                 (mst--amapconcat (mst--render-section-list section-contents it) context-value)
-               ;; otherwise, if it's a truthy value, render in the current context
-               (if context-value
-                   (mst--render-section-list section-contents context)
-                 "")))
+             (cond
+              ;; if the context is a list of hash tables, render repeatedly
+              ((or (consp context-value) (vectorp context-value))
+               (mst--amapconcat (mst--render-section-list section-contents it) context-value))
+              ;; otherwise, if it's a truthy value, render in the current context
+              (t (if context-value
+                     (mst--render-section-list section-contents context)
+                   ""))))
             ;; render ^tags
             ((s-starts-with-p "^" section-spec)
              (if context-value
