@@ -17,6 +17,7 @@ Targeting [v.1.0.2](https://github.com/mustache/spec/tree/v1.0.2) of Mustache.
 * `{{^blocks}}`
 * `{{& escapedvariables}}`
 * `{{{escapedvariables}}}`
+* `{{!comments}}`
 * Errors on invalid templates (forgetting to close open sections etc)
 
 ## Todo:
