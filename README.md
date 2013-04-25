@@ -8,12 +8,43 @@ Targeting [v.1.0.2](https://github.com/mustache/spec/tree/v1.0.2) of Mustache.
 
     (let ((context (ht ("name" "J. Random user")))
       ;; evaluates to: "Hello J. Random user!"
-      (mustache-render "Hello {{name}}!" context))
+      (mustache-render "Hello {{name}}!" context)))
       
 ## Implemented mustache features
 
-* `{{variables}}`
-* `{{#blocks}}`
+Basic variable interpolation:
+
+    (mustache-render
+     "Coded with {{language}}!"
+     (ht ("language" "elisp"))) ;; "Coded with elisp!"
+     
+Blocks with booleans:
+
+    (mustache-render
+     "{{#is-sunny}}Looks nice today.{{/is-sunny}}"
+     (ht ("is-sunny" t))) ;; "Looks nice today."
+
+    (mustache-render
+     "{{#is-sunny}}Looks nice today.{{/is-sunny}}"
+     (ht ("is-sunny" nil))) ;; ""
+     
+Blocks with hash tables:
+
+    (mustache-render
+     "{{#user}}{{name}}{{/user}}"
+     (ht ("user"
+          (ht ("name" "Wilfred"))))) ;; "Wilfred"
+     
+Blocks with lists:
+
+    (mustache-render
+     "{{#user}}{{name}}{{/user}}"
+     (ht ("some-list"
+          (list
+           (ht ("item" "a"))
+           (ht ("item" "b"))
+           (ht ("item" "c")))))) ;; "abc"
+
 * `{{^blocks}}`
 * `{{& escapedvariables}}`
 * `{{{escapedvariables}}}`
