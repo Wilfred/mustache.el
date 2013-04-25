@@ -38,7 +38,14 @@
       "&lt;bar&gt; &amp;baz &#39; &quot;"
       (mustache-render "{{blah}}" context)))))
 
-(ert-deftest mustache-test-section ()
+(ert-deftest mustache-test-section-hash ()
+  (let ((context (ht ("user"  (ht ("name" "bob"))))))
+    (should
+     (equal
+      "bob"
+      (mustache-render "{{#user}}{{name}}{{/user}}" context)))))
+
+(ert-deftest mustache-test-section-list ()
   (let ((context (ht ("users" (list (ht ("name" "bob"))
                                     (ht ("name" "chris")))))))
     (should

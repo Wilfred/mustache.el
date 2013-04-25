@@ -3,7 +3,7 @@
 ;; Copyright (C) 2013 Wilfred Hughes
 
 ;; Author: Wilfred Hughes <me@wilfred.me.uk>
-;; Version: 0.8
+;; Version: 0.9
 ;; Keywords: mustache, template
 ;; Package-Requires: ((ht "0.8") (s "1.3.0") (dash "1.1.0"))
 
@@ -203,6 +203,9 @@ render it in CONTEXT."
               ;; if the context is a list of hash tables, render repeatedly
               ((or (consp context-value) (vectorp context-value))
                (mst--amapconcat (mst--render-section-list section-contents it) context-value))
+              ;; if the context is a hash table, render in that context
+              ((hash-table-p context-value)
+               (mst--render-section-list section-contents context-value))
               ;; otherwise, if it's a truthy value, render in the current context
               (t (if context-value
                      (mst--render-section-list section-contents context)
