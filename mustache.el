@@ -3,7 +3,7 @@
 ;; Copyright (C) 2013 Wilfred Hughes
 
 ;; Author: Wilfred Hughes <me@wilfred.me.uk>
-;; Version: 0.9
+;; Version: 0.10
 ;; Keywords: mustache, template
 ;; Package-Requires: ((ht "0.8") (s "1.3.0") (dash "1.1.0"))
 
@@ -192,7 +192,7 @@ render it in CONTEXT."
          ;; nested section
          (let* (;; section-spec of the form "#foo"
                 (section-spec (second (first parsed-lexeme)))
-                (section-name (substring section-spec 1))
+                (section-name (s-trim (substring section-spec 1)))
                 (context-value (ht-get context section-name))
                 ;; strip section open and close
                 (section-contents (-slice parsed-lexeme 1 -1)))
@@ -219,7 +219,9 @@ render it in CONTEXT."
          (mst--render-tag parsed-lexeme context))
         ;; plain text
         (t
-         (second parsed-lexeme))))
+         (s-chop-prefix
+          "\n"
+          (second parsed-lexeme)))))
 
 (defun mst--escape-html (string)
   "Escape HTML in STRING."

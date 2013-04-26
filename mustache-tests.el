@@ -19,6 +19,25 @@
       "foo "
       (mustache-render "foo {{blah}}" context)))))
 
+(ert-deftest mustache-test-section-inner-whitespace ()
+  (should
+   (equal
+    "="
+    (mustache-render "{{# boolean }}={{/ boolean }}" (ht ("boolean" t))))))
+
+(ert-deftest mustache-test-standalone-lines ()
+  (should
+   (equal "| This Is
+|
+| A Line
+"
+    (mustache-render "| This Is
+{{#boolean}}
+|
+{{/boolean}}
+| A Line
+" (ht ("boolean" t))))))
+
 (ert-deftest mustache-test-extra-section-close ()
   (should-error
    (mustache-render "{{/blah}}" (ht-create))))

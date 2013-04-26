@@ -74,6 +74,7 @@ Blocks with lists:
 
 ## Changelog
 
+* v0.10 Whitespace sensitive now matches the mustache spec in more cases
 * v0.9 Fixed rendering of `{{#blocks}}` when the context value is a
   hash table.
 * v0.8 Removed dependency on `with-namespace` in favour of internal
