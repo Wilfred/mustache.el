@@ -60,8 +60,16 @@ Blocks with lists:
 * Optional error on missing variables from the context
 * Whitespace (in)sensitivity
 * Accessing parent contexts
+
+## Developing mustache.el
+
+mustache.el is broken up into several files, using `load` to import
+them. If you have a checked-out copy of mustache.el, you will need to
+do:
+
+    (add-to-list 'load-path "~/path/to/checked-out-repo/")
       
-## Running tests
+### Running tests
 
     M-x mustache-run-tests
 
