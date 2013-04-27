@@ -64,6 +64,15 @@
       "bob"
       (mustache-render "{{#user}}{{name}}{{/user}}" context)))))
 
+(ert-deftest mustache-test-section-hash-nested ()
+  (let ((context (ht
+                  ("foo" "bar")
+                  ("user"  (ht ("name" "bob"))))))
+    (should
+     (equal
+      "barbob"
+      (mustache-render "{{#user}}{{foo}}{{name}}{{/user}}" context)))))
+
 (ert-deftest mustache-test-section-list ()
   (let ((context (ht ("users" (list (ht ("name" "bob"))
                                     (ht ("name" "chris")))))))

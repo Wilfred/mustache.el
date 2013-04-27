@@ -59,8 +59,9 @@ Partials are searched for in `mustache-partial-paths'."
 
 (defun mst--context-add (table from-table)
   "Return a copy of TABLE where all the key-value pairs in FROM-TABLE have been set."
-  (let (new-table (ht-copy table))
-    (ht-update new-table from-table)))
+  (let ((new-table (ht-copy table)))
+    (ht-update new-table from-table)
+    new-table))
 
 (defun mst--render-section (parsed-lexeme context)
   "Given PARSED-LEXEME -- a lexed tag, plain text, or a nested list,
@@ -79,11 +80,10 @@ render it in CONTEXT."
              (cond
               ;; if the context is a list of hash tables, render repeatedly
               ((or (consp context-value) (vectorp context-value))
-               (mst--amapconcat (mst--render-section-list section-contents it) context-value))
+               (mst--amapconcat (mst--render-section-list section-contents (mst--context-add context it)) context-value))
               ;; if the context is a hash table, render in that context
               ((hash-table-p context-value)
-               ;; fixme
-               (mst--render-section-list section-contents context-value))
+               (mst--render-section-list section-contents (mst--context-add context context-value)))
               ;; otherwise, if it's a truthy value, render in the current context
               (t (if context-value
                      (mst--render-section-list section-contents context)
