@@ -49,11 +49,11 @@ Blocks with lists:
 * `{{& escapedvariables}}`
 * `{{{escapedvariables}}}`
 * `{{!comments}}`
+* `{{> partials}}`
 * Errors on invalid templates (forgetting to close open sections etc)
 
 ## Todo:
 
-* `{{> partials}}`
 * `{{=different delimeters=}}`
 * Functions in the context
 * Errors on unclosed blocks

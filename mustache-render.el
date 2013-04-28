@@ -16,16 +16,19 @@
 
 ;; todo: set flag to set tolerance of missing templates
 (defun mst--get-partial (name)
-  "Get the first partial whose file name is NAME.mustache, or \"\" otherwise.
+  "Get the first partial whose file name is NAME.mustache, or nil otherwise.
 Partials are searched for in `mustache-partial-paths'."
   (let ((partial-name (format "%s.mustache" name)))
     (dolist (path mustache-partial-paths)
-      (let* ((partials (directory-files path nil "\\.mustache$"))
-             (matching-partial (--first
-                                (string-match-p (regexp-quote partial-name) it)
-                                partials))))
-      (when matching-partial
-        (return (concat (file-name-as-directory path) matching-partial))))))
+      (-when-let*
+          ((partials (directory-files path nil "\\.mustache$"))
+           (matching-partial (--first
+                              (string-match-p (regexp-quote partial-name) it)
+                              partials)))
+        (return
+         (with-temp-buffer
+           (insert-file-contents-literally matching-partial)
+           (buffer-substring-no-properties (point-min) (point-max))))))))
 
 (defun mst--render-section-list (sections context)
   "Render a parsed list SECTIONS in CONTEXT."
@@ -38,6 +41,8 @@ Partials are searched for in `mustache-partial-paths'."
            "")
           ((s-starts-with-p "&" value) ;; unescaped variable
            (or (ht-get context (s-trim (substring value 1))) ""))
+          ((s-starts-with-p ">" value)
+           (or (mst--get-partial (s-trim (substring value 1))) ""))
           (t ;; normal variable
            (mst--escape-html (or (ht-get context value) ""))))))
 

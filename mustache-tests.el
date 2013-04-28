@@ -132,6 +132,13 @@
       ""
       (mustache-render "{{! whatever}}" context)))))
 
+(ert-deftest mustache-test-partial ()
+  (let ((mustache-partial-paths (list default-directory)))
+    (should
+     (equal
+      "hello world"
+      (mustache-render "{{> test }}" (ht))))))
+
 (defun mustache-run-tests ()
   (interactive)
   (ert-run-tests-interactively "mustache-test-"))
