@@ -59,7 +59,6 @@ Blocks with lists:
 * Errors on unclosed blocks
 * Optional error on missing variables from the context
 * Whitespace (in)sensitivity
-* Accessing parent contexts
 
 ## Developing mustache.el
 
