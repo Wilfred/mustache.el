@@ -4,6 +4,7 @@ Targeting [v.1.0.2](https://github.com/mustache/spec/tree/v1.0.2) of Mustache.
 
 ## Example usage
 
+    (require 'mustache)
     (require 'ht) ;; hash table library
 
     (let ((context (ht ("name" "J. Random user")))
