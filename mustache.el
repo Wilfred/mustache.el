@@ -1,4 +1,4 @@
-;;; mustache.el -- a mustache templating library in emacs lisp
+;;; mustache.el --- a mustache templating library in emacs lisp
 
 ;; Copyright (C) 2013 Wilfred Hughes
 
@@ -37,6 +37,8 @@
 
 ;; Public functions are of the form `mustache-FOO`, private
 ;; functions/variables are of the form `mst--FOO`.
+
+;;; Code:
 
 (load "mustache-render.el")
 
