@@ -1,5 +1,5 @@
 (require 's)
-(eval-when-compile (require 'cl)) ;; looop, return
+(eval-when-compile (require 'cl)) ;; loop, return
 
 (defvar mst--remaining-lexemes nil
   "Since `mst--parse-inner' recursively calls itself, we need a shared value to mutate.")
