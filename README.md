@@ -46,16 +46,59 @@ Blocks with lists:
            (ht ("item" "b"))
            (ht ("item" "c")))))) ;; "abc"
 
-* `{{^blocks}}`
-* `{{& escapedvariables}}`
-* `{{{escapedvariables}}}`
-* `{{!comments}}`
-* `{{> partials}}`
-* Errors on invalid templates (forgetting to close open sections etc)
+Inverted blocks:
+
+    (mustache-render
+     "{{^is-sunny}}Take an umbrella!{{/is-sunny}}"
+     (ht ("is-sunny" nil))) ;; "Take an umbrella!"
+
+    (mustache-render
+     "{{^is-sunny}}Take an umbrella!{{/is-sunny}}"
+     (ht ("is-sunny" t))) ;; ""
+
+Mustache variables are escaped:
+
+    (mustache-render
+     "{{ info }}"
+     (ht ("info" "<p>We use mustache</p>"))) ;; "&lt;p&gt;We use mustache&lt;/p&gt;"
+
+Unless explicitly marked as safe:
+
+    (mustache-render
+     "{{{info}}}"
+     (ht ("info" "<p>We use mustache</p>"))) ;; "<p>We use mustache</p>"
+
+    (mustache-render
+     "{{& info }}"
+     (ht ("info" "<p>We use mustache</p>"))) ;; "<p>We use mustache</p>"
+
+Comments:
+
+    (mustache-render
+     "hello{{! world }}"
+     (ht)) ;; "hello"
+
+Partials:
+
+    (let ((mustache-partial-paths (list default-directory)))
+      (mustache-render
+       "{{> test }}"
+       (ht ("user" "wilfred")))) ;; "hello wilfred"
+
+Changing delimeters:
+
+    (mustache-render
+     "{{=<% %>=}}<% style %>"
+     (ht ("style" "ERB style!"))) ;; "ERB style!"
+
+Error checking on invalid sections:
+
+    (mustache-render
+     "{{#outer}}{{#inner}}mismatched!{{/outer}}{{/inner}}"
+     (ht)) ;; error "Mismatched brackets: You closed a section with inner, but it wasn't open"
 
 ## Todo:
 
-* `{{=different delimeters=}}`
 * Functions in the context
 * Errors on unclosed blocks
 * Optional error on missing variables from the context
