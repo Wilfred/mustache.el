@@ -24,7 +24,7 @@ We return a list of lists: ((:text \"foo\") (:tag \"variable-name\"))"
                 (push (list :text (substring template 0 open-index)) lexemes))
               
               ;; save this tag
-              (push (list :tag between-delimeters) lexemes)
+              (push (list :tag (s-trim between-delimeters)) lexemes)
               
               ;; iterate on the remaining template
               (setq template
