@@ -42,14 +42,14 @@ Partials are searched for in `mustache-partial-paths'."
     (cond ((s-starts-with-p "!" value) ;; comment
            "")
           ((s-starts-with-p "&" value) ;; unescaped variable
-           (or (ht-get context (s-trim (substring value 1))) ""))
+           (ht-get context (s-trim (substring value 1) "")))
           ((s-starts-with-p ">" value)
            (let ((partial (mst--get-partial (s-trim (substring value 1)))))
              (if partial
                  (mst--render partial context)
                "")))
           (t ;; normal variable
-           (mst--escape-html (or (ht-get context value) ""))))))
+           (mst--escape-html (ht-get context value ""))))))
 
 (defun mst--tag-p (lexeme)
   "Is LEXEME a tag?"
