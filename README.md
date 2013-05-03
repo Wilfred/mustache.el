@@ -10,7 +10,23 @@ Targeting [v.1.0.2](https://github.com/mustache/spec/tree/v1.0.2) of Mustache.
     (let ((context (ht ("name" "J. Random user"))))
       ;; evaluates to: "Hello J. Random user!"
       (mustache-render "Hello {{name}}!" context))
+
+### (Optional) Without ht
+
+You're not forced to use `ht`, it's just an easier way of creating
+hash tables. You can use Emacs' reader syntax for hash tables instead:
       
+    (require 'mustache)
+
+    (let ((context
+           #s(hash-table test equal data ("name" "J. Random user"))))
+      ;; evaluates to: "Hello J. Random user!"
+      (mustache-render "Hello {{name}}!" context))
+
+Note that hash tables default to using `eql` as the key comparison
+function. You must set it to `equal` since mustache.el uses hash
+tables with string keys.
+
 ## Implemented mustache features
 
 Basic variable interpolation:
