@@ -7,9 +7,9 @@ Targeting [v.1.0.2](https://github.com/mustache/spec/tree/v1.0.2) of Mustache.
     (require 'mustache)
     (require 'ht) ;; hash table library
 
-    (let ((context (ht ("name" "J. Random user")))
+    (let ((context (ht ("name" "J. Random user"))))
       ;; evaluates to: "Hello J. Random user!"
-      (mustache-render "Hello {{name}}!" context)))
+      (mustache-render "Hello {{name}}!" context))
       
 ## Implemented mustache features
 
