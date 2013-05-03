@@ -82,6 +82,8 @@ do:
 
 ## Changelog
 
+* v0.15 Fixed partials not being recursively rendered, and added error
+  checking for `mustache-partial-path` not being a list
 * v0.14 Implemented changing tag delimeters e.g. `{{=<% %>=}}`
 * v0.13 Improved whitespace sensitivity for `{{ variable }}`
   interpolation
