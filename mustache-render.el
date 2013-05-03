@@ -42,7 +42,10 @@ Partials are searched for in `mustache-partial-paths'."
           ((s-starts-with-p "&" value) ;; unescaped variable
            (or (ht-get context (s-trim (substring value 1))) ""))
           ((s-starts-with-p ">" value)
-           (or (mst--get-partial (s-trim (substring value 1))) ""))
+           (let ((partial (mst--get-partial (s-trim (substring value 1)))))
+             (if partial
+                 (mst--render partial context)
+               "")))
           (t ;; normal variable
            (mst--escape-html (or (ht-get context value) ""))))))
 

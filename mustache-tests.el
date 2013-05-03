@@ -144,7 +144,17 @@
     (should
      (equal
       "hello world"
-      (mustache-render "{{> test }}" (ht))))))
+      (mustache-render "{{> partial }}" (ht))))))
+
+(ert-deftest mustache-test-partial-rendered ()
+  "Test that we render the contents of the partial as a mustache template."
+  (let ((mustache-partial-paths (list default-directory)))
+    (should
+     (equal
+      "hello world"
+      (mustache-render
+       "{{> partial-with-variables }}"
+       (ht ("thing" "world")))))))
 
 (ert-deftest mustache-test-change-delimeter ()
   (should
