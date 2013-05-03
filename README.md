@@ -82,7 +82,9 @@ do:
 
 ## Changelog
 
-* v0.13 Improved whitespace sensitivity for {{ variable }} interpolation
+* v0.14 Implemented changing tag delimeters e.g. `{{=<% %>=}}`
+* v0.13 Improved whitespace sensitivity for `{{ variable }}`
+  interpolation
 * v0.10 Whitespace sensitive now matches the mustache spec in more cases
 * v0.9 Fixed rendering of `{{#blocks}}` when the context value is a
   hash table.

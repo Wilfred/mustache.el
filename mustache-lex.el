@@ -1,3 +1,4 @@
+(eval-when-compile (require 'cl)) ;; first, second
 (require 's)
 
 (defun mst--lex (template)
@@ -23,8 +24,17 @@ We return a list of lists: ((:text \"foo\") (:tag \"variable-name\"))"
               (when (> open-index 0)
                 (push (list :text (substring template 0 open-index)) lexemes))
               
-              ;; save this tag
-              (push (list :tag (s-trim between-delimeters)) lexemes)
+              ;; if this is a tag that changes delimeters e.g. {{=<< >>=}}
+              ;; then set the new open/close delimeter string
+              (if (s-matches-p "=.+ .+=" between-delimeters)
+                (let* (;; strip leading/trailing =
+                       (delimeter-spec (substring between-delimeters 1 -1))
+                       (spec-parts (s-split " " delimeter-spec)))
+                  (setq open-delimeter (first spec-parts))
+                  (setq close-delimeter (second spec-parts)))
+
+                ;; otherwise it's a normal tag, so save it
+                (push (list :tag (s-trim between-delimeters)) lexemes))
               
               ;; iterate on the remaining template
               (setq template

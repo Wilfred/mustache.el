@@ -146,6 +146,12 @@
       "hello world"
       (mustache-render "{{> test }}" (ht))))))
 
+(ert-deftest mustache-test-change-delimeter ()
+  (should
+   (equal
+    "bar"
+    (mustache-render "{{=<< >>=}}<< foo >>" (ht ("foo" "bar"))))))
+
 (defun mustache-run-tests ()
   (interactive)
   (ert-run-tests-interactively "mustache-test-"))
