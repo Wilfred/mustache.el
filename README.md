@@ -75,7 +75,7 @@ Inverted blocks:
 Mustache variables are escaped:
 
     (mustache-render
-     "{{ info }}"
+     "{{info}}"
      (ht ("info" "<p>We use mustache</p>"))) ;; "&lt;p&gt;We use mustache&lt;/p&gt;"
 
 Unless explicitly marked as safe:
