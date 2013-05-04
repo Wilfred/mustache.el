@@ -55,7 +55,7 @@ Blocks with hash tables:
 Blocks with lists:
 
     (mustache-render
-     "{{#user}}{{name}}{{/user}}"
+     "{{#some-list}}{{item}}{{/some-list}}"
      (ht ("some-list"
           (list
            (ht ("item" "a"))
