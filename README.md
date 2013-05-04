@@ -96,9 +96,11 @@ Comments:
 
 Partials:
 
-    (let ((mustache-partial-paths (list default-directory)))
+    ;; assuming ~/projects/mustache.el/test.mustache exists
+    ;; and contains "hello {{user}}"
+    (let ((mustache-partial-paths (list "~/projects/mustache.el")))
       (mustache-render
-       "{{> test }}"
+       "{{> test}}"
        (ht ("user" "wilfred")))) ;; "hello wilfred"
 
 Changing delimeters:
