@@ -162,6 +162,17 @@
     "bar"
     (mustache-render "{{=<< >>=}}<< foo >>" (ht ("foo" "bar"))))))
 
+(ert-deftest mustache-test-lambda ()
+  (should
+   (equal
+    "<b>Willy is awesome.</b>"
+    (mustache-render
+     "{{#wrapped}}{{name}} is awesome.{{/wrapped}}"
+     (ht ("name" "Willy")
+         ("wrapped"
+          (lambda (template context)
+            (concat "<b>" (mustache-render template context) "</b>"))))))))
+
 (defun mustache-run-tests ()
   (interactive)
   (ert-run-tests-interactively "mustache-test-"))

@@ -109,6 +109,16 @@ Changing delimeters:
      "{{=<% %>=}}<% style %>"
      (ht ("style" "ERB style!"))) ;; "ERB style!"
 
+Lambdas:
+
+    (mustache-render
+     "{{#wrapped}}{{language}} is great.{{/wrapped}}"
+     (ht ("language" "elisp")
+         ("wrapped"
+          (lambda (template context)
+            (concat "<b>" (mustache-render template context) "</b>")))))
+    ;; "<b>elisp is great.</b>"
+
 Error checking on invalid sections:
 
     (mustache-render
@@ -117,7 +127,6 @@ Error checking on invalid sections:
 
 ## Todo:
 
-* Functions in the context
 * Errors on unclosed blocks
 * Optional error on missing variables from the context
 * Whitespace (in)sensitivity
@@ -143,6 +152,7 @@ do:
 
 ## Changelog
 
+* v0.16 Implemented lambdas.
 * v0.15 Fixed partials not being recursively rendered, and added error
   checking for `mustache-partial-path` not being a list
 * v0.14 Implemented changing tag delimeters e.g. `{{=<% %>=}}`

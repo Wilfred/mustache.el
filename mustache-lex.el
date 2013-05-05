@@ -52,3 +52,25 @@ We return a list of lists: ((:text \"foo\") (:tag \"variable-name\"))"
 (defun mst--section-p (lexeme)
   "Is LEXEME a nested section?"
   (not (atom (car lexeme))))
+
+;; fixme: assumes the delimeters haven't changed
+;; fixme: mst--lex doens't preserve whitespace
+(defun mst--unlex (lexemes)
+  "Given a lexed (and optionally parsed) list of lexemes,
+return the original input string."
+  (if lexemes
+      (let ((lexeme (first lexemes))
+            (rest (cdr lexemes)))
+        (cond
+         ;; recurse on this section, then the rest
+         ((mst--section-p lexeme)
+          (concat (mst--unlex lexeme) (mst--unlex rest)))
+         ((mst--tag-p lexeme)
+          ;; restore the delimeters, then unlex the rest
+          (let ((tag-name (second lexeme)))
+            (concat "{{" tag-name "}}" (mst--unlex rest))))
+         ;; otherwise, it's just raw text
+         (t
+          (let ((text (second lexeme)))
+            (concat text (mst--unlex rest))))))
+    ""))

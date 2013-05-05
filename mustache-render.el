@@ -91,6 +91,9 @@ render it in CONTEXT."
               ;; if the context is a hash table, render in that context
               ((hash-table-p context-value)
                (mst--render-section-list section-contents (mst--context-add context context-value)))
+              ;; if the context is a function, call it
+              ((functionp context-value)
+               (funcall context-value (mst--unlex section-contents) context))
               ;; if it's a truthy value, render in the current context
               (context-value
                (mst--render-section-list section-contents context))
