@@ -51,14 +51,6 @@ Partials are searched for in `mustache-partial-paths'."
           (t ;; normal variable
            (mst--escape-html (ht-get context value ""))))))
 
-(defun mst--tag-p (lexeme)
-  "Is LEXEME a tag?"
-  (equal (car lexeme) :tag))
-
-(defun mst--section-p (lexeme)
-  "Is LEXEME a nested section?"
-  (not (atom (car lexeme))))
-
 (defun mst--mapconcat (function sequence)
   "Apply FUNCTION to every element in SEQUENCE, and concat the results as strings."
   (mapconcat function sequence ""))

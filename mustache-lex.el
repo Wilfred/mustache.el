@@ -45,3 +45,10 @@ We return a list of lists: ((:text \"foo\") (:tag \"variable-name\"))"
             (setq template "")))))
     (nreverse lexemes)))
 
+(defun mst--tag-p (lexeme)
+  "Is LEXEME a tag?"
+  (equal (car lexeme) :tag))
+
+(defun mst--section-p (lexeme)
+  "Is LEXEME a nested section?"
+  (not (atom (car lexeme))))
