@@ -19,7 +19,7 @@
   "Get the first partial whose file name is NAME.mustache, or nil otherwise.
 Partials are searched for in `mustache-partial-paths'."
   (unless (listp mustache-partial-paths)
-    (error "`mustache-partial-paths' must be a list of paths."))
+    (error "`mustache-partial-paths' must be a list of paths"))
   (let ((partial-name (format "%s.mustache" name)))
     (dolist (path mustache-partial-paths)
       (-when-let*
