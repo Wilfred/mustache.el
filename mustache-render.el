@@ -94,10 +94,11 @@ render it in CONTEXT."
               ;; if the context is a hash table, render in that context
               ((hash-table-p context-value)
                (mst--render-section-list section-contents (mst--context-add context context-value)))
-              ;; otherwise, if it's a truthy value, render in the current context
-              (t (if context-value
-                     (mst--render-section-list section-contents context)
-                   ""))))
+              ;; if it's a truthy value, render in the current context
+              (context-value
+               (mst--render-section-list section-contents context))
+              ;; otherwise, don't render anything
+              (t "")))
             ;; render ^tags
             ((s-starts-with-p "^" section-spec)
              (if context-value
