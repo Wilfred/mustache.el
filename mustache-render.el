@@ -65,6 +65,11 @@ Partials are searched for in `mustache-partial-paths'."
     (ht-update new-table from-table)
     new-table))
 
+(defun mst--listp (object)
+  "Return t if OBJECT is a list.
+Unlike `listp', does not return t if OBJECT is a function."
+  (and (not (functionp object)) (listp object)))
+
 (defun mst--render-section (parsed-lexeme context)
   "Given PARSED-LEXEME -- a lexed tag, plain text, or a nested list,
 render it in CONTEXT."
@@ -81,7 +86,7 @@ render it in CONTEXT."
             ((s-starts-with-p "#" section-spec)
              (cond
               ;; if the context is a list of hash tables, render repeatedly
-              ((or (consp context-value) (vectorp context-value))
+              ((or (mst--listp context-value) (vectorp context-value))
                (mst--amapconcat (mst--render-section-list section-contents (mst--context-add context it)) context-value))
               ;; if the context is a hash table, render in that context
               ((hash-table-p context-value)
