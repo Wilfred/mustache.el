@@ -14,6 +14,14 @@
          (parsed-lexemes (mst--parse lexemes)))
     (mst--render-section-list parsed-lexemes context)))
 
+(defun mst--mapconcat (function sequence)
+  "Apply FUNCTION to every element in SEQUENCE, and concat the results as strings."
+  (mapconcat function sequence ""))
+
+(defmacro mst--amapconcat (form sequence)
+  "Anaphoric version of `mst--mapconcat'."
+  `(mst--mapconcat (lambda (it) ,form) ,sequence))
+
 ;; todo: set flag to set tolerance of missing templates
 (defun mst--get-partial (name)
   "Get the first partial whose file name is NAME.mustache, or nil otherwise.
@@ -50,14 +58,6 @@ Partials are searched for in `mustache-partial-paths'."
                "")))
           (t ;; normal variable
            (mst--escape-html (ht-get context value ""))))))
-
-(defun mst--mapconcat (function sequence)
-  "Apply FUNCTION to every element in SEQUENCE, and concat the results as strings."
-  (mapconcat function sequence ""))
-
-(defmacro mst--amapconcat (form sequence)
-  "Anaphoric version of `mst--mapconcat'."
-  `(mst--mapconcat (lambda (it) ,form) ,sequence))
 
 (defun mst--context-add (table from-table)
   "Return a copy of TABLE where all the key-value pairs in FROM-TABLE have been set."
