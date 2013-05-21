@@ -153,6 +153,8 @@ do:
 
 ## Changelog
 
+* v0.17 Fixed a bug where partial templates weren't found when
+  `default-directory` was set.
 * v0.16 Implemented lambdas.
 * v0.15 Fixed partials not being recursively rendered, and added error
   checking for `mustache-partial-path` not being a list
