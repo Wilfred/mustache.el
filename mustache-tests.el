@@ -146,6 +146,16 @@
       "hello world"
       (mustache-render "{{> partial }}" (ht))))))
 
+(ert-deftest mustache-test-partial-path ()
+  "Ensure we get the correct partial path, regardless of `default-directory'.
+Regression test for https://github.com/Wilfred/mustache.el/pull/3"
+  (let ((mustache-partial-paths (list default-directory))
+        (default-directory "/"))
+    (should
+     (equal
+      "hello world"
+      (mustache-render "{{> partial }}" (ht))))))
+
 (ert-deftest mustache-test-partial-rendered ()
   "Test that we render the contents of the partial as a mustache template."
   (let ((mustache-partial-paths (list default-directory)))
