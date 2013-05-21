@@ -37,7 +37,7 @@ Partials are searched for in `mustache-partial-paths'."
                               partials)))
         (return
          (with-temp-buffer
-           (insert-file-contents-literally matching-partial)
+           (insert-file-contents-literally (expand-file-name matching-partial path))
            (buffer-substring-no-properties (point-min) (point-max))))))))
 
 (defun mst--render-section-list (sections context)
