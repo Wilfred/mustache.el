@@ -127,9 +127,10 @@ Error checking on invalid sections:
 
 ## Todo:
 
-* Errors on unclosed blocks
+* Errors on unclosed tags
 * Optional error on missing variables from the context
-* Whitespace (in)sensitivity
+* Whitespace (in)sensitivity for windows newlines
+* Run full specification test suite
 
 ## Developing mustache.el
 
@@ -153,6 +154,7 @@ do:
 
 ## Changelog
 
+* v0.17 Improved whitespace (in)sensitivity
 * v0.16 Implemented lambdas.
 * v0.15 Fixed partials not being recursively rendered, and added error
   checking for `mustache-partial-path` not being a list
