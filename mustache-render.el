@@ -109,9 +109,7 @@ render it in CONTEXT."
          (mst--render-tag parsed-lexeme context))
         ;; plain text
         (t
-         (s-chop-prefix
-          "\n"
-          (second parsed-lexeme)))))
+         (second parsed-lexeme))))
 
 (defun mst--escape-html (string)
   "Escape HTML in STRING."
