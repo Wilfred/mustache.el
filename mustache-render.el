@@ -10,9 +10,10 @@
 
 (defun mst--render (template context)
   "Render a mustache TEMPLATE with hash table CONTEXT."
-  (let* ((lexemes (mst--lex template))
-         (parsed-lexemes (mst--parse lexemes)))
-    (mst--render-section-list parsed-lexemes context)))
+  (-> template
+    mst--lex
+    mst--parse
+    (mst--render-section-list context)))
 
 ;; todo: set flag to set tolerance of missing templates
 (defun mst--get-partial (name)
