@@ -1,4 +1,4 @@
-(eval-when-compile (require 'cl)) ;; first, second
+(eval-when-compile (require 'cl)) ;; first, second, destructuring-bind, loop
 (require 's)
 
 (defun mst--lex (template)
@@ -45,13 +45,55 @@ We return a list of lists: ((:text \"foo\") (:tag \"variable-name\"))"
             (setq template "")))))
     (nreverse lexemes)))
 
+(defun mst--clean-section-whitespace (lexemes)
+  "Given a list of LEXEMES, remove whitespace around section tags
+if they're on their own on a line. Modifies the original list."
+  ;; iterate over all lexemes:
+  (loop for i from 0 to (- (length lexemes) 3)
+        collect
+        ;; find sections that have plain text before and after
+        (let ((first (elt lexemes i))
+              (second (elt lexemes (+ i 1)))
+              (third (elt lexemes (+ i 2))))
+          (when (and (mst--text-p first)
+                     (mst--lexed-section-p second)
+                     (mst--text-p third)
+                     ;; check the section is on its own line
+                     (string-match-p "\n *$" (mst--lexeme-text first))
+                     (string-match-p "^\n" (mst--lexeme-text third)))
+            ;; then we cleanup whitespace
+            (setf (elt lexemes i) (mst--no-trailing-newline first)))))
+  lexemes)
+
+(defalias 'mst--lexeme-text 'second
+  "Returns the text context of a lexeme.")
+
+(defun mst--no-trailing-newline (lexeme)
+  "Replace \"\n\" or \"\n   \" at the end of a plain text lexeme."
+  (list
+   :text
+   (replace-regexp-in-string "\n *$" "" (mst--lexeme-text lexeme))))
+
 (defun mst--tag-p (lexeme)
   "Is LEXEME a tag?"
   (equal (car lexeme) :tag))
 
+(defun mst--lexed-section-p (lexeme)
+  "Is LEXEME a section (before parsing)?"
+  (destructuring-bind (type text) lexeme
+      (and
+       (equal type :tag)
+       (or
+        (s-starts-with-p "#" text)
+        (s-starts-with-p "/" text)))))
+
 (defun mst--section-p (lexeme)
   "Is LEXEME a nested section?"
   (not (atom (car lexeme))))
+
+(defun mst--text-p (lexeme)
+  "Is LEXEME plain text?"
+  (equal (car lexeme) :text))
 
 ;; fixme: assumes the delimeters haven't changed
 ;; fixme: mst--lex doens't preserve whitespace

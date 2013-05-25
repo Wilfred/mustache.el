@@ -127,9 +127,10 @@ Error checking on invalid sections:
 
 ## Todo:
 
-* Errors on unclosed blocks
+* Errors on unclosed tags
 * Optional error on missing variables from the context
-* Whitespace (in)sensitivity
+* Whitespace (in)sensitivity for windows newlines
+* Run full specification test suite
 
 ## Developing mustache.el
 
@@ -153,6 +154,7 @@ do:
 
 ## Changelog
 
+* v0.18 Improved whitespace (in)sensitivity
 * v0.17 Fixed a bug where partial templates weren't found when
   `default-directory` was set.
 * v0.16 Implemented lambdas.

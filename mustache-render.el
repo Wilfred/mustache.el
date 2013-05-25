@@ -10,9 +10,11 @@
 
 (defun mst--render (template context)
   "Render a mustache TEMPLATE with hash table CONTEXT."
-  (let* ((lexemes (mst--lex template))
-         (parsed-lexemes (mst--parse lexemes)))
-    (mst--render-section-list parsed-lexemes context)))
+  (-> template
+    mst--lex
+    mst--clean-section-whitespace
+    mst--parse
+    (mst--render-section-list context)))
 
 (defun mst--mapconcat (function sequence)
   "Apply FUNCTION to every element in SEQUENCE, and concat the results as strings."
@@ -108,9 +110,7 @@ render it in CONTEXT."
          (mst--render-tag parsed-lexeme context))
         ;; plain text
         (t
-         (s-chop-prefix
-          "\n"
-          (second parsed-lexeme)))))
+         (second parsed-lexeme))))
 
 (defun mst--escape-html (string)
   "Escape HTML in STRING."
