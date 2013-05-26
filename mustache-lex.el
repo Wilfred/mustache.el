@@ -59,20 +59,20 @@ if they're on their own on a line. Modifies the original list."
                      (mst--section-tag-p second)
                      (mst--text-p third)
                      ;; check the section is on its own line
-                     (string-match-p "\n *$" (mst--lexeme-text first))
-                     (string-match-p "^\n" (mst--lexeme-text third)))
+                     (string-match-p "\n *$" (mst--tag-text first))
+                     (string-match-p "^\n" (mst--tag-text third)))
             ;; then we cleanup whitespace
             (setf (elt lexemes i) (mst--no-trailing-newline first)))))
   lexemes)
 
-(defalias 'mst--lexeme-text 'second
-  "Returns the text context of a lexeme.")
+(defalias 'mst--tag-text 'second
+  "Returns the text context of a tag.")
 
 (defun mst--no-trailing-newline (lexeme)
   "Replace \"\n\" or \"\n   \" at the end of a plain text lexeme."
   (list
    :text
-   (replace-regexp-in-string "\n *$" "" (mst--lexeme-text lexeme))))
+   (replace-regexp-in-string "\n *$" "" (mst--tag-text lexeme))))
 
 (defun mst--tag-p (lexeme)
   "Is LEXEME a tag?"

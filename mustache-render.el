@@ -47,7 +47,7 @@ Partials are searched for in `mustache-partial-paths'."
 
 (defun mst--render-tag (parsed-tag context)
   "Given PARSED-TAG, render it in hash table CONTEXT."
-  (let ((inner-text (mst--lexeme-text parsed-tag)))
+  (let ((inner-text (mst--tag-text parsed-tag)))
     (cond
      ((mst--comment-tag-p parsed-tag)
       "")
@@ -76,7 +76,7 @@ Unlike `listp', does not return t if OBJECT is a function."
   "Get the name of this SECCTION-TAG.
 E.g. from {{#foo}} to \"foo\"."
   (-> section-tag ;; e.g (:tag "#foo")
-    mst--lexeme-text ;; to "#foo"
+    mst--tag-text ;; to "#foo"
     (substring 1) ;; to "foo"
     s-trim))
 
