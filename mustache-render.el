@@ -2,8 +2,7 @@
 (require 's)
 (require 'dash)
 
-;; checkme
-(eval-when-compile '(require 'cl)) ;; destructuring-bind, loop, return, dolist
+(eval-when-compile '(require 'cl)) ;; return, dolist
 
 (load "mustache-lex.el")
 (load "mustache-parse.el")
@@ -48,18 +47,19 @@ Partials are searched for in `mustache-partial-paths'."
 
 (defun mst--render-tag (parsed-tag context)
   "Given PARSED-TAG, render it in hash table CONTEXT."
-  (destructuring-bind (type value) parsed-tag
-    (cond ((s-starts-with-p "!" value) ;; comment
-           "")
-          ((s-starts-with-p "&" value) ;; unescaped variable
-           (ht-get context (s-trim (substring value 1)) ""))
-          ((s-starts-with-p ">" value)
-           (let ((partial (mst--get-partial (s-trim (substring value 1)))))
-             (if partial
-                 (mst--render partial context)
-               "")))
-          (t ;; normal variable
-           (mst--escape-html (ht-get context value ""))))))
+  (let ((inner-text (mst--lexeme-text parsed-tag)))
+    (cond
+     ((mst--comment-tag-p parsed-tag)
+      "")
+     ((mst--unescaped-tag-p parsed-tag)
+      (ht-get context (s-trim (substring inner-text 1)) ""))
+     ((mst--partial-tag-p parsed-tag)
+      (let ((partial (mst--get-partial (s-trim (substring inner-text 1)))))
+        (if partial
+            (mst--render partial context)
+          "")))
+     (t ;; normal variable
+      (mst--escape-html (ht-get context inner-text ""))))))
 
 (defun mst--context-add (table from-table)
   "Return a copy of TABLE where all the key-value pairs in FROM-TABLE have been set."
@@ -72,20 +72,26 @@ Partials are searched for in `mustache-partial-paths'."
 Unlike `listp', does not return t if OBJECT is a function."
   (and (not (functionp object)) (listp object)))
 
+(defun mst--section-name (section-tag)
+  "Get the name of this SECCTION-TAG.
+E.g. from {{#foo}} to \"foo\"."
+  (-> section-tag ;; e.g (:tag "#foo")
+    mst--lexeme-text ;; to "#foo"
+    (substring 1) ;; to "foo"
+    s-trim))
+
 (defun mst--render-section (parsed-lexeme context)
   "Given PARSED-LEXEME -- a lexed tag, plain text, or a nested list,
 render it in CONTEXT."
   (cond ((mst--section-p parsed-lexeme)
          ;; nested section
-         (let* (;; section-spec of the form "#foo"
-                (section-spec (second (first parsed-lexeme)))
-                (section-name (s-trim (substring section-spec 1)))
+         (let* ((section-tag (first parsed-lexeme))
+                (section-name (mst--section-name section-tag))
                 (context-value (ht-get context section-name))
                 ;; strip section open and close
                 (section-contents (-slice parsed-lexeme 1 -1)))
            (cond
-            ;; render #tags
-            ((s-starts-with-p "#" section-spec)
+            ((mst--open-section-tag-p section-tag)
              (cond
               ;; if the context is a list of hash tables, render repeatedly
               ((or (mst--listp context-value) (vectorp context-value))
@@ -102,7 +108,7 @@ render it in CONTEXT."
               ;; otherwise, don't render anything
               (t "")))
             ;; render ^tags
-            ((s-starts-with-p "^" section-spec)
+            ((mst--inverted-section-tag-p section-tag)
              (if context-value
                  ""
                (mst--render-section-list section-contents context))))))

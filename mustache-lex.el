@@ -80,11 +80,42 @@ if they're on their own on a line. Modifies the original list."
 
 (defun mst--section-tag-p (lexeme)
   "Is LEXEME a section tag?"
+  (or
+   (mst--open-section-tag-p lexeme)
+   (mst--inverted-section-tag-p lexeme)
+   (mst--close-section-tag-p lexeme)))
+
+(defun mst--open-section-tag-p (lexeme)
+  "Is LEXEME an open section tag?
+See also `mst--inverted-section-tag-p'."
   (and (mst--tag-p lexeme)
-       (or
-        (s-starts-with-p "^" (second lexeme))
-        (s-starts-with-p "#" (second lexeme))
-        (s-starts-with-p "/" (second lexeme)))))
+       (s-starts-with-p "#" (second lexeme))))
+
+(defun mst--inverted-section-tag-p (lexeme)
+  "Is LEXEME an inverted section tag?"
+  (and (mst--tag-p lexeme)
+       (s-starts-with-p "^" (second lexeme))))
+
+(defun mst--close-section-tag-p (lexeme)
+  "Is LEXEME a close section tag?"
+  (and (mst--tag-p lexeme)
+       (s-starts-with-p "/" (second lexeme))))
+
+(defun mst--comment-tag-p (lexeme)
+  "Is LEXEME a comment tag?"
+  (and (mst--tag-p lexeme)
+       (s-starts-with-p "!" (second lexeme))))
+
+(defun mst--unescaped-tag-p (lexeme)
+  "Is LEXEME an unescaped variable tag?
+Note that the lexer converts {{{foo}}} to {{& foo}}."
+  (and (mst--tag-p lexeme)
+       (s-starts-with-p "&" (second lexeme))))
+
+(defun mst--partial-tag-p (lexeme)
+  "Is LEXEME a partial tag?"
+  (and (mst--tag-p lexeme)
+       (s-starts-with-p "" (second lexeme))))
 
 (defun mst--section-p (lexeme)
   "Is LEXEME a nested section?"
