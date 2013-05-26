@@ -152,6 +152,16 @@
       ""
       (mustache-render "{{! whatever}}" context)))))
 
+(ert-deftest mustache-test-after-comment ()
+  "Ensure we render tags after comments.
+Regression test for https://github.com/Wilfred/mustache.el/issues/4."
+  (let ((context  (ht ("b" "hello"))))
+    (should
+     (equal
+      "hello"
+      (mustache-render
+ "{{!<script src=\"somescript.js\" async=\"async\"}}{{b}}" context)))))
+
 (ert-deftest mustache-test-partial ()
   (let ((mustache-partial-paths (list default-directory)))
     (should
