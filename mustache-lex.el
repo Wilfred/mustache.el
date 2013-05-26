@@ -56,7 +56,7 @@ if they're on their own on a line. Modifies the original list."
               (second (elt lexemes (+ i 1)))
               (third (elt lexemes (+ i 2))))
           (when (and (mst--text-p first)
-                     (mst--lexed-section-p second)
+                     (mst--section-tag-p second)
                      (mst--text-p third)
                      ;; check the section is on its own line
                      (string-match-p "\n *$" (mst--lexeme-text first))
@@ -78,14 +78,12 @@ if they're on their own on a line. Modifies the original list."
   "Is LEXEME a tag?"
   (equal (car lexeme) :tag))
 
-(defun mst--lexed-section-p (lexeme)
-  "Is LEXEME a section (before parsing)?"
-  (destructuring-bind (type text) lexeme
-      (and
-       (equal type :tag)
+(defun mst--section-tag-p (lexeme)
+  "Is LEXEME a section tag?"
+  (and (mst--tag-p lexeme)
        (or
-        (s-starts-with-p "#" text)
-        (s-starts-with-p "/" text)))))
+        (s-starts-with-p "#" (second lexeme))
+        (s-starts-with-p "/" (second lexeme)))))
 
 (defun mst--section-p (lexeme)
   "Is LEXEME a nested section?"
