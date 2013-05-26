@@ -45,6 +45,19 @@
 | A Line
 " (ht ("boolean" t))))))
 
+(ert-deftest mustache-test-standalone-lines-inverted ()
+  (should
+   (equal "| This Is
+|
+| A Line
+"
+    (mustache-render "| This Is
+{{^boolean}}
+|
+{{/boolean}}
+| A Line
+" (ht ("boolean" nil))))))
+
 (ert-deftest mustache-test-standalone-lines-leading-whitespace ()
   (should
    (equal "| This Is

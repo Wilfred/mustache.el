@@ -82,6 +82,7 @@ if they're on their own on a line. Modifies the original list."
   "Is LEXEME a section tag?"
   (and (mst--tag-p lexeme)
        (or
+        (s-starts-with-p "^" (second lexeme))
         (s-starts-with-p "#" (second lexeme))
         (s-starts-with-p "/" (second lexeme)))))
 
