@@ -154,6 +154,8 @@ do:
 
 ## Changelog
 
+* v0.19 Fixed a bug where comment tags containing = were treated as
+  changing the delimeters.
 * v0.18 Improved whitespace (in)sensitivity
 * v0.17 Fixed a bug where partial templates weren't found when
   `default-directory` was set.

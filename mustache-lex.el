@@ -26,7 +26,7 @@ We return a list of lists: ((:text \"foo\") (:tag \"variable-name\"))"
               
               ;; if this is a tag that changes delimeters e.g. {{=<< >>=}}
               ;; then set the new open/close delimeter string
-              (if (s-matches-p "=.+ .+=" between-delimeters)
+              (if (s-matches-p "^=.+ .+=$" between-delimeters)
                 (let* (;; strip leading/trailing =
                        (delimeter-spec (substring between-delimeters 1 -1))
                        (spec-parts (s-split " " delimeter-spec)))
