@@ -115,7 +115,7 @@ Note that the lexer converts {{{foo}}} to {{& foo}}."
 (defun mst--partial-tag-p (lexeme)
   "Is LEXEME a partial tag?"
   (and (mst--tag-p lexeme)
-       (s-starts-with-p "" (second lexeme))))
+       (s-starts-with-p ">" (second lexeme))))
 
 (defun mst--section-p (lexeme)
   "Is LEXEME a nested section?"
