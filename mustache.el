@@ -31,7 +31,7 @@
 
 ;; We treat mustache templates as if they conform to a rough grammar:
 
-;; TEMPLATE = plaintext | TAG | SECTION | TEMPLATE
+;; TEMPLATE = plaintext | TAG | SECTION | TEMPLATE TEMPLATE
 ;; SECTION = OPEN-TAG TEMPLATE CLOSE-TAG
 ;; TAG = "{{" text "}}"
 
