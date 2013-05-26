@@ -154,6 +154,8 @@ do:
 
 ## Changelog
 
+* v0.20 improved whitespace insensitivity for `{{^blocks}}` and
+  `{{!comments}}`
 * v0.19 Fixed a bug where comment tags containing = were treated as
   changing the delimeters.
 * v0.18 Improved whitespace (in)sensitivity

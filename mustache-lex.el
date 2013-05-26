@@ -45,9 +45,10 @@ We return a list of lists: ((:text \"foo\") (:tag \"variable-name\"))"
             (setq template "")))))
     (nreverse lexemes)))
 
-(defun mst--clean-section-whitespace (lexemes)
-  "Given a list of LEXEMES, remove whitespace around section tags
-if they're on their own on a line. Modifies the original list."
+(defun mst--clean-whitespace (lexemes)
+  "Given a list of LEXEMES, remove whitespace around sections and
+comments if they're on their own on a line. Modifies the original
+list."
   ;; iterate over all lexemes:
   (loop for i from 0 to (- (length lexemes) 3)
         collect
@@ -56,7 +57,9 @@ if they're on their own on a line. Modifies the original list."
               (second (elt lexemes (+ i 1)))
               (third (elt lexemes (+ i 2))))
           (when (and (mst--text-p first)
-                     (mst--section-tag-p second)
+                     (or
+                      (mst--section-tag-p second)
+                      (mst--comment-tag-p second))
                      (mst--text-p third)
                      ;; check the section is on its own line
                      (string-match-p "\n *$" (mst--tag-text first))

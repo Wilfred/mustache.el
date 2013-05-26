@@ -71,6 +71,18 @@
 | A Line
 " (ht ("boolean" t))))))
 
+(ert-deftest mustache-test-standalone-lines-comments ()
+  (should
+   (equal "| This Is
+|
+| A Line
+"
+    (mustache-render "| This Is
+|
+  {{!comment}}
+| A Line
+" (ht)))))
+
 (ert-deftest mustache-test-extra-section-close ()
   (should-error
    (mustache-render "{{/blah}}" (ht-create))))

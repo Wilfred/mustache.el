@@ -11,7 +11,7 @@
   "Render a mustache TEMPLATE with hash table CONTEXT."
   (-> template
     mst--lex
-    mst--clean-section-whitespace
+    mst--clean-whitespace
     mst--parse
     (mst--render-section-list context)))
 
