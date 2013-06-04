@@ -145,6 +145,11 @@ do:
 
     M-x mustache-run-tests
 
+### Roadmap
+
+v1.0 -- Pass the full mustache v1.0.2 specification tests (excluding
+optional parts).
+
 ## Other templating projects
 
 * The `format` function (quick and dirty!)
