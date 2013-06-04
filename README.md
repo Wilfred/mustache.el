@@ -155,6 +155,8 @@ do:
 
 ## Changelog
 
+* v0.21 Fixed rendering of contexts where the hash table contained
+  number values.
 * v0.20 improved whitespace insensitivity for `{{^blocks}}` and
   `{{!comments}}`
 * v0.19 Fixed a bug where comment tags containing = were treated as

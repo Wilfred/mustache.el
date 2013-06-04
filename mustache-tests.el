@@ -12,6 +12,13 @@
       "foo bar"
       (mustache-render "foo {{blah}}" context)))))
 
+(ert-deftest mustache-test-variable-number ()
+  (let ((context (ht ("blah" 2))))
+    (should
+     (equal
+      "foo 2"
+      (mustache-render "foo {{blah}}" context)))))
+
 (ert-deftest mustache-test-variable-whitespace ()
   (let ((context (ht ("blah" "bar"))))
     (should

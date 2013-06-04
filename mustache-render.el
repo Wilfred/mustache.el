@@ -59,7 +59,10 @@ Partials are searched for in `mustache-partial-paths'."
             (mst--render partial context)
           "")))
      (t ;; normal variable
-      (mst--escape-html (ht-get context inner-text ""))))))
+      (let ((variable-value (ht-get context inner-text "")))
+        (when (numberp variable-value)
+          (setq variable-value (number-to-string variable-value)))
+        (mst--escape-html variable-value))))))
 
 (defun mst--context-add (table from-table)
   "Return a copy of TABLE where all the key-value pairs in FROM-TABLE have been set."
