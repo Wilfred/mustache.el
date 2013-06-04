@@ -28,11 +28,12 @@
         in (tests-from-path path)
         do (let ((actual (mustache-render template context)))
              (unless (equal actual expected)
-               (message "Expected %s but got %s" expected actual)
+               (message "Expected:\n%s\nbut got:\n%s" expected actual)
                (incf failures))))
   (message "%d failure(s)" failures))
 
 (run-tests-from-path "spec/inverted.json")
+(run-tests-from-path "spec/interpolation.json")
 
 (defun mustache-test-spec ()
   (interactive)
