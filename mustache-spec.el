@@ -34,6 +34,7 @@
 
 (run-tests-from-path "spec/inverted.json")
 (run-tests-from-path "spec/interpolation.json")
+(run-tests-from-path "spec/section.json")
 
 (defun mustache-test-spec ()
   (interactive)
