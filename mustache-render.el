@@ -52,7 +52,10 @@ Partials are searched for in `mustache-partial-paths'."
      ((mst--comment-tag-p parsed-tag)
       "")
      ((mst--unescaped-tag-p parsed-tag)
-      (ht-get context (s-trim (substring inner-text 1)) ""))
+      (let ((variable-value (ht-get context (s-trim (substring inner-text 1)) "")))
+        (when (numberp variable-value)
+          (setq variable-value (number-to-string variable-value)))
+        variable-value))
      ((mst--partial-tag-p parsed-tag)
       (let ((partial (mst--get-partial (s-trim (substring inner-text 1)))))
         (if partial

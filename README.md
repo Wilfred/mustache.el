@@ -160,6 +160,8 @@ optional parts).
 
 ## Changelog
 
+* v0.22 Fixed rendering of contexts with numeric values and
+  `{{&escaped blocks}}`
 * v0.21 Fixed rendering of contexts where the hash table contained
   number values.
 * v0.20 improved whitespace insensitivity for `{{^blocks}}` and
