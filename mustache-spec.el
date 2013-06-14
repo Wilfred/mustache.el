@@ -37,10 +37,12 @@ describing expected behaviour"
      ,@(--map (mst--ert-from-spec it)
               (ht-get (mst--read-json-path path) "tests"))))
 
-(ert-tests-from-path "spec/inverted.json")
-(ert-tests-from-path "spec/interpolation.json")
-(ert-tests-from-path "spec/section.json")
 (ert-tests-from-path "spec/comments.json")
+(ert-tests-from-path "spec/delimeters.json")
+(ert-tests-from-path "spec/interpolation.json")
+(ert-tests-from-path "spec/inverted.json")
+;; todo: partials
+(ert-tests-from-path "spec/sections.json")
 
 (defun mustache-test-spec ()
   (interactive)
