@@ -2,9 +2,11 @@
 (require 'ht)
 (require 'dash)
 (require 'mustache)
+(require 'ert)
+(require 's)
 (eval-when-compile (require 'cl))
 
-(defun read-json-path (path)
+(defun mst--read-json-path (path)
   "Open the JSON file at PATH, parse it, and return a hash table of its contents."
   (let ((json-object-type 'hash-table)
         (json-array-type 'list)
@@ -13,42 +15,31 @@
       (insert-file-contents-literally path)
       (json-read))))
 
-(defun tests-from-path (path)
-  "Read tests from a mustache specification file at PATH."
-  (--map (list (ht-get it "data")
-               (ht-get it "template")
-               (ht-get it "expected")
-               )
-         (ht-get (read-json-path path) "tests")))
-
-;; todo: proper ERT unit tests
-(defun* run-tests-from-path (path &aux (failures 0))
-  "Loop over the assertions, message when they fail"
-  (loop for (context template expected)
-        in (tests-from-path path)
-        do (let ((actual (mustache-render template context)))
-             (unless (equal actual expected)
-               (message "Expected:\n%s\nbut got:\n%s" expected actual)
-               (incf failures))))
-  (message "%d failure(s)" failures))
+(defun mst--ert-from-spec (spec-case)
+  "Return a quoted ert test from a hash-table SPEC-CASE
+describing expected behaviour"
+  (let* ((spec-name (ht-get spec-case "name"))
+         (test-name (intern (format "mustache-spec-%s" (s-replace " " "-" spec-name))))
+         (description (ht-get spec-case "desc"))
+         (template (ht-get spec-case "template"))
+         (context (ht-get spec-case "data"))
+         (expected (ht-get spec-case "expected")))
+    `(ert-deftest ,test-name ()
+         ,description
+       (should
+        (equal
+         ,expected (mustache-render ,template ,context))))))
 
 (defmacro ert-tests-from-path (path)
-  (let (ert-tests)
-    (loop for (context template expected)
-          in (tests-from-path path)
-          do (push
-              `(ert-deftest test-needs-name ()
-                 (should (equal (mustache-render ,template ,context)
-                                ,expected)))
-              ert-tests))
-    ert-tests))
+  "Open the JSON file at PATH, and return a list of ert test cases."
+  `(progn
+     ,@(--map (mst--ert-from-spec it)
+              (ht-get (mst--read-json-path path) "tests"))))
 
 (ert-tests-from-path "spec/inverted.json")
-
-(run-tests-from-path "spec/inverted.json")
-(run-tests-from-path "spec/interpolation.json")
-(run-tests-from-path "spec/section.json")
-(run-tests-from-path "spec/comments.json")
+(ert-tests-from-path "spec/interpolation.json")
+(ert-tests-from-path "spec/section.json")
+(ert-tests-from-path "spec/comments.json")
 
 (defun mustache-test-spec ()
   (interactive)
