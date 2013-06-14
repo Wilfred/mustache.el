@@ -32,6 +32,19 @@
                (incf failures))))
   (message "%d failure(s)" failures))
 
+(defmacro ert-tests-from-path (path)
+  (let (ert-tests)
+    (loop for (context template expected)
+          in (tests-from-path path)
+          do (push
+              `(ert-deftest test-needs-name ()
+                 (should (equal (mustache-render ,template ,context)
+                                ,expected)))
+              ert-tests))
+    ert-tests))
+
+(ert-tests-from-path "spec/inverted.json")
+
 (run-tests-from-path "spec/inverted.json")
 (run-tests-from-path "spec/interpolation.json")
 (run-tests-from-path "spec/section.json")
