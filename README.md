@@ -152,11 +152,12 @@ optional parts).
 
 ## Other templating projects
 
-* The `format` function (quick and dirty!)
+* The built-in `format` function (quick and dirty!)
 * [esxml](https://github.com/tali713/esxml)
 * [elnode](https://github.com/nicferrier/elnode) (docs [here](https://github.com/nicferrier/elnode#sending-files))
 * `s-format` from [s.el](https://github.com/magnars/s.el)
 * [xmlgen](https://github.com/philjackson/xmlgen)
+* [dollaro](https://github.com/laynor/dollaro)
 
 ## Changelog
 
