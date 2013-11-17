@@ -1,6 +1,8 @@
 # mustache.el
 #### *a mustache templating library in Emacs Lisp*
 
+[![Build Status](https://travis-ci.org/Wilfred/mustache.el.png?branch=master)](https://travis-ci.org/Wilfred/mustache.el)
+
 Targeting [v.1.0.2](https://github.com/mustache/spec/tree/v1.0.2) of Mustache.
 
 ## Example usage
@@ -152,7 +154,7 @@ mustache.el is broken up into several files, using `load` to import
 them. If you have a checked-out copy of mustache.el, you will need to
 do:
 
-    (add-to-list 'load-path "~/path/to/checked-out-repo/")
+    (add-to-list 'load-path "~/projects/mustache.el/")
       
 ### Running tests
 
