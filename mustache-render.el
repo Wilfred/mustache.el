@@ -47,6 +47,8 @@ Partials are searched for in `mustache-partial-paths'."
 
 (defun mst--context-get (context variable-name &optional default)
   "Lookup VARIABLE-NAME in CONTEXT, returning DEFAULT if not present."
+  (when (eq mustache-key-type 'keyword)
+    (setq variable-name (intern (concat ":" variable-name))))
   (ht-get context variable-name default))
 
 (defun mst--render-tag (parsed-tag context)

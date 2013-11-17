@@ -3,7 +3,7 @@
 ;; Copyright (C) 2013 Wilfred Hughes
 
 ;; Author: Wilfred Hughes <me@wilfred.me.uk>
-;; Version: 0.22
+;; Version: 0.23
 ;; Keywords: mustache, template
 ;; Package-Requires: ((ht "0.9") (s "1.3.0") (dash "1.2.0"))
 
@@ -49,6 +49,17 @@
 
 (defvar mustache-partial-paths nil
   "A list of paths to be searched for mustache partial templates (files ending .mustache).")
+
+(defvar mustache-key-type 'string
+  "What type of key we expect in contexts.
+Can take the value 'string or 'keyword.
+
+For 'string we expect contexts of the form:
+#s\(hash-table data \(\"name\" \"J. Random user\"\)\)
+
+for 'keyword we expect contexts of the form:
+#s\(hash-table data \(:name \"J. Random user\"\)\)
+")
 
 (provide 'mustache)
 ;;; mustache.el ends here

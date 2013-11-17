@@ -28,6 +28,19 @@ Note that hash tables default to using `eql` as the key comparison
 function. You must set it to `equal` since mustache.el uses hash
 tables with string keys.
 
+### Keywords in context
+
+You can use keywords in contexts, which allows you to skip setting the
+key comparison function.
+
+    (require 'mustache)
+
+    (let ((mustache-key-type 'keyword)
+          (context
+           #s(hash-table data (:name "J. Random user"))))
+      ;; evaluates to: "Hello J. Random user!"
+      (mustache-render "Hello {{name}}!" context))
+
 ## Implemented mustache features
 
 Basic variable interpolation:
@@ -166,6 +179,8 @@ optional parts).
 
 ## Changelog
 
+* v0.23 Added the variable `mustache-key-type` which allows contexts
+  with keyword for keys.
 * v0.22 Fixed rendering of contexts with numeric values and
   `{{&escaped blocks}}`
 * v0.21 Fixed rendering of contexts where the hash table contained

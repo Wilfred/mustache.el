@@ -40,6 +40,14 @@
       "foo "
       (mustache-render "foo {{blah}}" context)))))
 
+(ert-deftest mustache-test-keyword-variable ()
+  (let ((mustache-key-type 'keyword)
+        (context (ht (:blah "bar"))))
+    (should
+     (equal
+      "foo bar"
+      (mustache-render "foo {{blah}}" context)))))
+
 (ert-deftest mustache-test-section-inner-whitespace ()
   (should
    (equal
@@ -172,6 +180,14 @@
 
 (ert-deftest mustache-test-conditional-false ()
   (let ((context (ht ("no" nil))))
+    (should
+     (equal
+      "foo "
+      (mustache-render "foo {{#no}}bar{{/no}}" context)))))
+
+(ert-deftest mustache-test-conditional-keyword ()
+  (let ((mustache-key-type 'keyword)
+        (context (ht (:no nil))))
     (should
      (equal
       "foo "
