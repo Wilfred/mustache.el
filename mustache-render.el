@@ -45,6 +45,10 @@ Partials are searched for in `mustache-partial-paths'."
   "Render a parsed list SECTIONS in CONTEXT."
   (mst--amapconcat (mst--render-section it context) sections))
 
+(defun mst--context-get (context variable-name &optional default)
+  "Lookup VARIABLE-NAME in CONTEXT, returning DEFAULT if not present."
+  (ht-get context variable-name default))
+
 (defun mst--render-tag (parsed-tag context)
   "Given PARSED-TAG, render it in hash table CONTEXT."
   (let ((inner-text (mst--tag-text parsed-tag)))
@@ -52,7 +56,7 @@ Partials are searched for in `mustache-partial-paths'."
      ((mst--comment-tag-p parsed-tag)
       "")
      ((mst--unescaped-tag-p parsed-tag)
-      (let ((variable-value (ht-get context (s-trim (substring inner-text 1)) "")))
+      (let ((variable-value (mst--context-get context (s-trim (substring inner-text 1)) "")))
         (when (numberp variable-value)
           (setq variable-value (number-to-string variable-value)))
         variable-value))
@@ -62,7 +66,7 @@ Partials are searched for in `mustache-partial-paths'."
             (mst--render partial context)
           "")))
      (t ;; normal variable
-      (let ((variable-value (ht-get context inner-text "")))
+      (let ((variable-value (mst--context-get context inner-text "")))
         (when (numberp variable-value)
           (setq variable-value (number-to-string variable-value)))
         (mst--escape-html variable-value))))))
@@ -93,7 +97,7 @@ render it in CONTEXT."
          ;; nested section
          (let* ((section-tag (first parsed-lexeme))
                 (section-name (mst--section-name section-tag))
-                (context-value (ht-get context section-name))
+                (context-value (mst--context-get context section-name))
                 ;; strip section open and close
                 (section-contents (-slice parsed-lexeme 1 -1)))
            (cond
