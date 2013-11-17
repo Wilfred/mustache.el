@@ -143,7 +143,13 @@ do:
       
 ### Running tests
 
+Within Emacs:
+
     M-x mustache-run-tests
+
+Or from a command line (you need Cask installed):
+
+    $ make test
 
 ### Roadmap
 
