@@ -3,7 +3,7 @@
 ;; Copyright (C) 2013 Wilfred Hughes
 
 ;; Author: Wilfred Hughes <me@wilfred.me.uk>
-;; Version: 0.23
+;; Version: 0.24
 ;; Keywords: mustache, template
 ;; Package-Requires: ((ht "0.9") (s "1.3.0") (dash "1.2.0"))
 

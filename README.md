@@ -181,6 +181,7 @@ optional parts).
 
 ## Changelog
 
+* v0.24 No changes yet.
 * v0.23 Added the variable `mustache-key-type` which allows contexts
   with keyword for keys.
 * v0.22 Fixed rendering of contexts with numeric values and
