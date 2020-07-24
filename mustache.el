@@ -6,6 +6,7 @@
 ;; Version: 0.24
 ;; Keywords: mustache, template
 ;; Package-Requires: ((ht "0.9") (s "1.3.0") (dash "1.2.0"))
+;; URL: https://github.com/Wilfred/mustache.el
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
