@@ -4,7 +4,7 @@
 
 ;; Author: Wilfred Hughes <me@wilfred.me.uk>
 ;; Version: 0.24
-;; Keywords: mustache, template
+;; Keywords: convenience mustache template
 ;; Package-Requires: ((ht "0.9") (s "1.3.0") (dash "1.2.0"))
 ;; URL: https://github.com/Wilfred/mustache.el
 
