@@ -1,4 +1,4 @@
-;;; mustache.el --- a mustache templating library in emacs lisp
+;;; mustache.el --- Mustache templating library in emacs lisp
 
 ;; Copyright (C) 2013 Wilfred Hughes
 
