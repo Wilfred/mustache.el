@@ -43,6 +43,8 @@
 
 (load "mustache-render.el")
 
+(declare-function mst--render "mustache-render")
+
 ;; todo: add flag to set tolerance of missing variables
 (defun mustache-render (template context)
   "Render a mustache TEMPLATE with hash table CONTEXT."
