@@ -1,11 +1,12 @@
-;;; mustache.el --- a mustache templating library in emacs lisp
+;;; mustache.el --- Mustache templating library in emacs lisp
 
 ;; Copyright (C) 2013 Wilfred Hughes
 
 ;; Author: Wilfred Hughes <me@wilfred.me.uk>
 ;; Version: 0.24
-;; Keywords: mustache, template
+;; Keywords: convenience mustache template
 ;; Package-Requires: ((ht "0.9") (s "1.3.0") (dash "1.2.0"))
+;; URL: https://github.com/Wilfred/mustache.el
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -42,6 +43,8 @@
 
 (load "mustache-render.el")
 
+(declare-function mst--render "mustache-render")
+
 ;; todo: add flag to set tolerance of missing variables
 (defun mustache-render (template context)
   "Render a mustache TEMPLATE with hash table CONTEXT."
@@ -58,8 +61,7 @@ For 'string we expect contexts of the form:
 #s\(hash-table data \(\"name\" \"J. Random user\"\)\)
 
 for 'keyword we expect contexts of the form:
-#s\(hash-table data \(:name \"J. Random user\"\)\)
-")
+#s\(hash-table data \(:name \"J. Random user\"\)\)")
 
 (provide 'mustache)
 ;;; mustache.el ends here
