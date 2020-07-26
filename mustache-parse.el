@@ -1,17 +1,30 @@
+;;; mustache-parse.el --- Mustache parse module
+
+;; Copyright (C) 2013 Wilfred Hughes
+
+;; Author: Wilfred Hughes <me@wilfred.me.uk>
+;; URL: https://github.com/Wilfred/mustache.el
+
 ;; This file is part of mustache.el.
-;;
+
 ;; mustache.el is free software: you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
 ;; (at your option) any later version.
-;;
+
 ;; mustache.el is distributed in the hope that it will be useful, but
 ;; WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 ;; General Public License for more details.
-;;
+
 ;; You should have received a copy of the GNU General Public License
 ;; along with mustache.el.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Mustache parse module.
+
+;;; Code:
 
 (require 's)
 (eval-when-compile (require 'cl)) ;; loop, return
@@ -68,3 +81,6 @@
   "Get the name of the section from LEXEME, a two part list returned by `mst--lex'.
 The leading character (the #, ^ or /) is stripped."
   (s-chop-prefixes '("#" "^" "/") (cadr lexeme)))
+
+(provide 'mustache-parse)
+;;; mustache-parse.el ends here
