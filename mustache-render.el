@@ -32,8 +32,8 @@
 
 (eval-when-compile '(require 'cl)) ;; return, dolist
 
-(load "mustache-lex.el")
-(load "mustache-parse.el")
+(require 'mustache-lex)
+(require 'mustache-parse)
 
 (defun mst--render (template context)
   "Render a mustache TEMPLATE with hash table CONTEXT."
