@@ -1,17 +1,30 @@
+;;; mustache-render.el --- Mustache render module
+
+;; Copyright (C) 2013 Wilfred Hughes
+
+;; Author: Wilfred Hughes <me@wilfred.me.uk>
+;; URL: https://github.com/Wilfred/mustache.el
+
 ;; This file is part of mustache.el.
-;;
+
 ;; mustache.el is free software: you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
 ;; (at your option) any later version.
-;;
+
 ;; mustache.el is distributed in the hope that it will be useful, but
 ;; WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 ;; General Public License for more details.
-;;
+
 ;; You should have received a copy of the GNU General Public License
 ;; along with mustache.el.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Mustache render module.
+
+;;; Code:
 
 (require 'ht)
 (require 's)
@@ -19,8 +32,8 @@
 
 (eval-when-compile '(require 'cl)) ;; return, dolist
 
-(load "mustache-lex.el")
-(load "mustache-parse.el")
+(require 'mustache-lex)
+(require 'mustache-parse)
 
 (defun mst--render (template context)
   "Render a mustache TEMPLATE with hash table CONTEXT."
@@ -153,3 +166,6 @@ render it in CONTEXT."
     (s-replace ">" "&gt;")
     (s-replace "'" "&#39;")
     (s-replace "\"" "&quot;")))
+
+(provide 'mustache-render)
+;;; mustache-render.el ends here

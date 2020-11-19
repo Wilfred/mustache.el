@@ -41,7 +41,7 @@
 
 ;;; Code:
 
-(load "mustache-render.el")
+(require 'mustache-render)
 
 (declare-function mst--render "mustache-render")
 
