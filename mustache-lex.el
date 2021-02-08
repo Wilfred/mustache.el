@@ -34,7 +34,7 @@
 We return a list of lists: ((:text \"foo\") (:tag \"variable-name\"))"
   ;; convert {{{foo}}} to {{& foo}}
   (setq template (replace-regexp-in-string "{{{\\(.*?\\)}}}" "{{& \\1}}" template))
-  
+
   (let ((open-delimeter "{{")
         (close-delimeter "}}")
         (lexemes nil))
@@ -51,19 +51,19 @@ We return a list of lists: ((:text \"foo\") (:tag \"variable-name\"))"
               ;; save the string before the tag
               (when (> open-index 0)
                 (push (list :text (substring template 0 open-index)) lexemes))
-              
+
               ;; if this is a tag that changes delimeters e.g. {{=<< >>=}}
               ;; then set the new open/close delimeter string
               (if (s-matches-p "^=.+ .+=$" between-delimeters)
-                (let* (;; strip leading/trailing =
-                       (delimeter-spec (substring between-delimeters 1 -1))
-                       (spec-parts (s-split " " delimeter-spec)))
-                  (setq open-delimeter (first spec-parts))
-                  (setq close-delimeter (second spec-parts)))
+                  (let* (;; strip leading/trailing =
+                         (delimeter-spec (substring between-delimeters 1 -1))
+                         (spec-parts (s-split " " delimeter-spec)))
+                    (setq open-delimeter (first spec-parts))
+                    (setq close-delimeter (second spec-parts)))
 
                 ;; otherwise it's a normal tag, so save it
                 (push (list :tag (s-trim between-delimeters)) lexemes))
-              
+
               ;; iterate on the remaining template
               (setq template
                     (substring template continue-from-index)))
