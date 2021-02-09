@@ -88,7 +88,7 @@
 |
 | A Line
 "
-    (mustache-render "| This Is
+          (mustache-render "| This Is
 {{#boolean}}
 |
 {{/boolean}}
@@ -101,7 +101,7 @@
 |
 | A Line
 "
-    (mustache-render "| This Is
+          (mustache-render "| This Is
 {{^boolean}}
 |
 {{/boolean}}
@@ -114,7 +114,7 @@
 |
 | A Line
 "
-    (mustache-render "| This Is
+          (mustache-render "| This Is
   {{#boolean}}
 |
   {{/boolean}}
@@ -127,7 +127,7 @@
 |
 | A Line
 "
-    (mustache-render "| This Is
+          (mustache-render "| This Is
 |
   {{!comment}}
 | A Line
@@ -243,7 +243,7 @@ Regression test for https://github.com/Wilfred/mustache.el/issues/4."
      (equal
       "hello"
       (mustache-render
- "{{!<script src=\"somescript.js\" async=\"async\"}}{{b}}" context)))))
+       "{{!<script src=\"somescript.js\" async=\"async\"}}{{b}}" context)))))
 
 (ert-deftest mustache-test-partial ()
   (let ((mustache-partial-paths (list default-directory)))

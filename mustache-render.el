@@ -38,10 +38,10 @@
 (defun mst--render (template context)
   "Render a mustache TEMPLATE with hash table CONTEXT."
   (-> template
-    mst--lex
-    mst--clean-whitespace
-    mst--parse
-    (mst--render-section-list context)))
+      mst--lex
+      mst--clean-whitespace
+      mst--parse
+      (mst--render-section-list context)))
 
 (defun mst--mapconcat (function sequence)
   "Apply FUNCTION to every element in SEQUENCE, and concat the results as strings."
@@ -116,9 +116,9 @@ Unlike `listp', does not return t if OBJECT is a function."
   "Get the name of this SECCTION-TAG.
 E.g. from {{#foo}} to \"foo\"."
   (-> section-tag ;; e.g (:tag "#foo")
-    mst--tag-text ;; to "#foo"
-    (substring 1) ;; to "foo"
-    s-trim))
+      mst--tag-text ;; to "#foo"
+      (substring 1) ;; to "foo"
+      s-trim))
 
 (defun mst--render-section (parsed-lexeme context)
   "Given PARSED-LEXEME -- a lexed tag, plain text, or a nested list,
@@ -161,11 +161,11 @@ render it in CONTEXT."
 (defun mst--escape-html (string)
   "Escape HTML in STRING."
   (->> string
-    (s-replace "&" "&amp;")
-    (s-replace "<" "&lt;")
-    (s-replace ">" "&gt;")
-    (s-replace "'" "&#39;")
-    (s-replace "\"" "&quot;")))
+       (s-replace "&" "&amp;")
+       (s-replace "<" "&lt;")
+       (s-replace ">" "&gt;")
+       (s-replace "'" "&#39;")
+       (s-replace "\"" "&quot;")))
 
 (provide 'mustache-render)
 ;;; mustache-render.el ends here
