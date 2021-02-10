@@ -26,14 +26,17 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
 (require 'ht)
 (require 's)
 (require 'dash)
 
-(eval-when-compile '(require 'cl)) ;; return, dolist
-
 (require 'mustache-lex)
 (require 'mustache-parse)
+
+(defvar mustache-key-type)
+(defvar mustache-partial-paths)
 
 (defun mst--render (template context)
   "Render a mustache TEMPLATE with hash table CONTEXT."
@@ -55,19 +58,20 @@
 (defun mst--get-partial (name)
   "Get the first partial whose file name is NAME.mustache, or nil otherwise.
 Partials are searched for in `mustache-partial-paths'."
-  (unless (listp mustache-partial-paths)
-    (error "`mustache-partial-paths' must be a list of paths"))
-  (let ((partial-name (format "%s.mustache" name)))
-    (dolist (path mustache-partial-paths)
-      (-when-let*
-          ((partials (directory-files path nil "\\.mustache$"))
-           (matching-partial (--first
-                              (string-match-p (regexp-quote partial-name) it)
-                              partials)))
-        (return
-         (with-temp-buffer
-           (insert-file-contents-literally (expand-file-name matching-partial path))
-           (buffer-substring-no-properties (point-min) (point-max))))))))
+  (cl-block nil
+    (unless (listp mustache-partial-paths)
+      (error "`mustache-partial-paths' must be a list of paths"))
+    (let ((partial-name (format "%s.mustache" name)))
+      (dolist (path mustache-partial-paths)
+        (-when-let*
+            ((partials (directory-files path nil "\\.mustache$"))
+             (matching-partial (--first
+                                (string-match-p (regexp-quote partial-name) it)
+                                partials)))
+          (cl-return
+           (with-temp-buffer
+             (insert-file-contents-literally (expand-file-name matching-partial path))
+             (buffer-substring-no-properties (point-min) (point-max)))))))))
 
 (defun mst--render-section-list (sections context)
   "Render a parsed list SECTIONS in CONTEXT."
@@ -125,7 +129,7 @@ E.g. from {{#foo}} to \"foo\"."
 render it in CONTEXT."
   (cond ((mst--section-p parsed-lexeme)
          ;; nested section
-         (let* ((section-tag (first parsed-lexeme))
+         (let* ((section-tag (cl-first parsed-lexeme))
                 (section-name (mst--section-name section-tag))
                 (context-value (mst--context-get context section-name))
                 ;; strip section open and close
@@ -156,7 +160,7 @@ render it in CONTEXT."
          (mst--render-tag parsed-lexeme context))
         ;; plain text
         (t
-         (second parsed-lexeme))))
+         (cl-second parsed-lexeme))))
 
 (defun mst--escape-html (string)
   "Escape HTML in STRING."

@@ -26,7 +26,7 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl)) ;; first, second, destructuring-bind, loop
+(require 'cl-lib)
 (require 's)
 
 (defun mst--lex (template)
@@ -58,8 +58,8 @@ We return a list of lists: ((:text \"foo\") (:tag \"variable-name\"))"
                   (let* (;; strip leading/trailing =
                          (delimeter-spec (substring between-delimeters 1 -1))
                          (spec-parts (s-split " " delimeter-spec)))
-                    (setq open-delimeter (first spec-parts))
-                    (setq close-delimeter (second spec-parts)))
+                    (setq open-delimeter (cl-first spec-parts))
+                    (setq close-delimeter (cl-second spec-parts)))
 
                 ;; otherwise it's a normal tag, so save it
                 (push (list :tag (s-trim between-delimeters)) lexemes))
@@ -78,7 +78,7 @@ We return a list of lists: ((:text \"foo\") (:tag \"variable-name\"))"
 comments if they're on their own on a line. Modifies the original
 list."
   ;; iterate over all lexemes:
-  (loop for i from 0 to (- (length lexemes) 3)
+  (cl-loop for i from 0 to (- (length lexemes) 3)
         collect
         ;; find sections that have plain text before and after
         (let ((first (elt lexemes i))
@@ -96,7 +96,7 @@ list."
             (setf (elt lexemes i) (mst--no-trailing-newline first)))))
   lexemes)
 
-(defalias 'mst--tag-text 'second
+(defalias 'mst--tag-text 'cl-second
   "Returns the text context of a tag.")
 
 (defun mst--no-trailing-newline (lexeme)
@@ -120,33 +120,33 @@ list."
   "Is LEXEME an open section tag?
 See also `mst--inverted-section-tag-p'."
   (and (mst--tag-p lexeme)
-       (s-starts-with-p "#" (second lexeme))))
+       (s-starts-with-p "#" (cl-second lexeme))))
 
 (defun mst--inverted-section-tag-p (lexeme)
   "Is LEXEME an inverted section tag?"
   (and (mst--tag-p lexeme)
-       (s-starts-with-p "^" (second lexeme))))
+       (s-starts-with-p "^" (cl-second lexeme))))
 
 (defun mst--close-section-tag-p (lexeme)
   "Is LEXEME a close section tag?"
   (and (mst--tag-p lexeme)
-       (s-starts-with-p "/" (second lexeme))))
+       (s-starts-with-p "/" (cl-second lexeme))))
 
 (defun mst--comment-tag-p (lexeme)
   "Is LEXEME a comment tag?"
   (and (mst--tag-p lexeme)
-       (s-starts-with-p "!" (second lexeme))))
+       (s-starts-with-p "!" (cl-second lexeme))))
 
 (defun mst--unescaped-tag-p (lexeme)
   "Is LEXEME an unescaped variable tag?
 Note that the lexer converts {{{foo}}} to {{& foo}}."
   (and (mst--tag-p lexeme)
-       (s-starts-with-p "&" (second lexeme))))
+       (s-starts-with-p "&" (cl-second lexeme))))
 
 (defun mst--partial-tag-p (lexeme)
   "Is LEXEME a partial tag?"
   (and (mst--tag-p lexeme)
-       (s-starts-with-p ">" (second lexeme))))
+       (s-starts-with-p ">" (cl-second lexeme))))
 
 (defun mst--section-p (lexeme)
   "Is LEXEME a nested section?"
@@ -162,7 +162,7 @@ Note that the lexer converts {{{foo}}} to {{& foo}}."
   "Given a lexed (and optionally parsed) list of lexemes,
 return the original input string."
   (if lexemes
-      (let ((lexeme (first lexemes))
+      (let ((lexeme (cl-first lexemes))
             (rest (cdr lexemes)))
         (cond
          ;; recurse on this section, then the rest
@@ -170,11 +170,11 @@ return the original input string."
           (concat (mst--unlex lexeme) (mst--unlex rest)))
          ((mst--tag-p lexeme)
           ;; restore the delimeters, then unlex the rest
-          (let ((tag-name (second lexeme)))
+          (let ((tag-name (cl-second lexeme)))
             (concat "{{" tag-name "}}" (mst--unlex rest))))
          ;; otherwise, it's just raw text
          (t
-          (let ((text (second lexeme)))
+          (let ((text (cl-second lexeme)))
             (concat text (mst--unlex rest))))))
     ""))
 
