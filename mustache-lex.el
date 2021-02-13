@@ -75,7 +75,7 @@ We return a list of lists: ((:text \"foo\") (:tag \"variable-name\"))"
 
 (defun mst--clean-whitespace (lexemes)
   "Given a list of LEXEMES, remove whitespace around sections and
-comments if they're on their own on a line. Modifies the original
+comments if they're on their own on a line.  Modifies the original
 list."
   ;; iterate over all lexemes:
   (cl-loop for i from 0 to (- (length lexemes) 3)
@@ -100,7 +100,7 @@ list."
   "Returns the text context of a tag.")
 
 (defun mst--no-trailing-newline (lexeme)
-  "Replace \"\n\" or \"\n   \" at the end of a plain text lexeme."
+  "Replace \"\n\" or \"\n   \" at the end of a plain text LEXEME."
   (list
    :text
    (replace-regexp-in-string "\n *$" "" (mst--tag-text lexeme))))
@@ -159,7 +159,7 @@ Note that the lexer converts {{{foo}}} to {{& foo}}."
 ;; fixme: assumes the delimeters haven't changed
 ;; fixme: mst--lex doens't preserve whitespace
 (defun mst--unlex (lexemes)
-  "Given a lexed (and optionally parsed) list of lexemes,
+  "Given a lexed (and optionally parsed) list of LEXEMES,
 return the original input string."
   (if lexemes
       (let ((lexeme (cl-first lexemes))
