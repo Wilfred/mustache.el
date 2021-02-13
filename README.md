@@ -141,6 +141,14 @@ Error checking on invalid sections:
      "{{#outer}}{{#inner}}mismatched!{{/outer}}{{/inner}}"
      (ht)) ;; error "Mismatched brackets: You closed a section with inner, but it wasn't open"
 
+## Alist support
+
+For cusual usage, you can specify using alist for context
+
+    (let ((context '(("name" . "J. Random user"))))
+      (mustache-render "Hello {{name}}!" context))
+    ;;=> "Hello J. Random user!"
+
 ## Todo:
 
 * Errors on unclosed tags
