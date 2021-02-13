@@ -58,10 +58,10 @@
 Can take the value 'string or 'keyword.
 
 For 'string we expect contexts of the form:
-#s\(hash-table data \(\"name\" \"J. Random user\"\)\)
+#s(hash-table data (\"name\" \"J. Random user\"))
 
 for 'keyword we expect contexts of the form:
-#s\(hash-table data \(:name \"J. Random user\"\)\)")
+#s(hash-table data (:name \"J. Random user\"))")
 
 (provide 'mustache)
 ;;; mustache.el ends here
