@@ -265,11 +265,6 @@ return the original input string."
     (and (equal type :tag)
          (s-starts-with-p "/" value))))
 
-(defun mst--section-name (lexeme)
-  "Get the name of the section from LEXEME, a two part list returned by `mst--lex'.
-The leading character (the #, ^ or /) is stripped."
-  (s-chop-prefixes '("#" "^" "/") (cadr lexeme)))
-
 ;;; Rendering 
 
 (defvar mustache-key-type)
@@ -354,7 +349,7 @@ Unlike `listp', does not return t if OBJECT is a function."
   (and (not (functionp object)) (listp object)))
 
 (defun mst--section-name (section-tag)
-  "Get the name of this SECCTION-TAG.
+  "Get the name of this SECTION-TAG.
 E.g. from {{#foo}} to \"foo\"."
   (-> section-tag ;; e.g (:tag "#foo")
       mst--tag-text ;; to "#foo"
