@@ -1,8 +1,6 @@
 # mustache.el
 #### *a mustache templating library in Emacs Lisp*
 
-[![Main workflow](https://github.com/Wilfred/mustache.el/workflows/Main%20workflow/badge.svg)](https://github.com/Wilfred/mustache.el/actions)
-
 Targeting [v.1.0.2](https://github.com/mustache/spec/tree/v1.0.2) of Mustache.
 
 ## Example usage
