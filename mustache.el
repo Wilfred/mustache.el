@@ -119,22 +119,21 @@ We return a list of lists: ((:text \"foo\") (:tag \"variable-name\"))"
 comments if they're on their own on a line.  Modifies the original
 list."
   ;; iterate over all lexemes:
-  (cl-loop for i from 0 to (- (length lexemes) 3)
-           collect
-           ;; find sections that have plain text before and after
-           (let ((first (elt lexemes i))
-                 (second (elt lexemes (+ i 1)))
-                 (third (elt lexemes (+ i 2))))
-             (when (and (mst--text-p first)
-                        (or
-                         (mst--section-tag-p second)
-                         (mst--comment-tag-p second))
-                        (mst--text-p third)
-                        ;; check the section is on its own line
-                        (string-match-p "\n *$" (mst--tag-text first))
-                        (string-match-p "^\n" (mst--tag-text third)))
-               ;; then we cleanup whitespace
-               (setf (elt lexemes i) (mst--no-trailing-newline first)))))
+  (dotimes (i (- (length lexemes) 2))
+    ;; find sections that have plain text before and after
+    (let ((first (elt lexemes i))
+          (second (elt lexemes (+ i 1)))
+          (third (elt lexemes (+ i 2))))
+      (when (and (mst--text-p first)
+                 (or
+                  (mst--section-tag-p second)
+                  (mst--comment-tag-p second))
+                 (mst--text-p third)
+                 ;; check the section is on its own line
+                 (string-match-p "\n *$" (mst--tag-text first))
+                 (string-match-p "^\n" (mst--tag-text third)))
+        ;; then we cleanup whitespace
+        (setf (elt lexemes i) (mst--no-trailing-newline first)))))
   lexemes)
 
 (defalias 'mst--tag-text 'cl-second
