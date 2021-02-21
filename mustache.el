@@ -274,14 +274,6 @@ return the original input string."
 (defvar mustache-key-type)
 (defvar mustache-partial-paths)
 
-(defun mst--mapconcat (function sequence)
-  "Apply FUNCTION to every element in SEQUENCE, and concat the results as strings."
-  (mapconcat function sequence ""))
-
-(defmacro mst--amapconcat (form sequence)
-  "Anaphoric version of `mst--mapconcat'."
-  `(mst--mapconcat (lambda (it) ,form) ,sequence))
-
 ;; todo: set flag to set tolerance of missing templates
 (defun mst--get-partial (name)
   "Get the first partial whose file name is NAME.mustache, or nil otherwise.
@@ -303,7 +295,9 @@ Partials are searched for in `mustache-partial-paths'."
 
 (defun mst--render-section-list (sections context)
   "Render a parsed list SECTIONS in CONTEXT."
-  (mst--amapconcat (mst--render-section it context) sections))
+  (s-join
+   ""
+   (--map (mst--render-section it context) sections)))
 
 (defun mst--context-get (context variable-name &optional default)
   "Lookup VARIABLE-NAME in CONTEXT, returning DEFAULT if not present."
@@ -367,7 +361,11 @@ render it in CONTEXT."
              (cond
               ;; if the context is a list of hash tables, render repeatedly
               ((or (mst--listp context-value) (vectorp context-value))
-               (mst--amapconcat (mst--render-section-list section-contents (mst--context-add context it)) context-value))
+               (s-join
+                ""
+                (--map
+                 (mst--render-section-list section-contents (mst--context-add context it))
+                 context-value)))
               ;; if the context is a hash table, render in that context
               ((hash-table-p context-value)
                (mst--render-section-list section-contents (mst--context-add context context-value)))
