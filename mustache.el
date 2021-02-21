@@ -49,7 +49,11 @@
 ;; todo: add flag to set tolerance of missing variables
 (defun mustache-render (template context)
   "Render a mustache TEMPLATE with hash table CONTEXT."
-  (mst--render template context))
+  (-> template
+      mst--lex
+      mst--clean-whitespace
+      mst--parse
+      (mst--render-section-list context)))
 
 (defvar mustache-partial-paths nil
   "A list of paths to be searched for mustache partial templates (files ending .mustache).")
@@ -270,14 +274,6 @@ return the original input string."
 (defvar mustache-key-type)
 (defvar mustache-partial-paths)
 
-(defun mst--render (template context)
-  "Render a mustache TEMPLATE with hash table CONTEXT."
-  (-> template
-      mst--lex
-      mst--clean-whitespace
-      mst--parse
-      (mst--render-section-list context)))
-
 (defun mst--mapconcat (function sequence)
   "Apply FUNCTION to every element in SEQUENCE, and concat the results as strings."
   (mapconcat function sequence ""))
@@ -329,7 +325,7 @@ Partials are searched for in `mustache-partial-paths'."
      ((mst--partial-tag-p parsed-tag)
       (let ((partial (mst--get-partial (s-trim (substring inner-text 1)))))
         (if partial
-            (mst--render partial context)
+            (mustache-render partial context)
           "")))
      (t ;; normal variable
       (let ((variable-value (mst--context-get context inner-text "")))
