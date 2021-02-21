@@ -232,22 +232,24 @@ return the original input string."
   "Parse `mst--remaining-lexemes', and return a list of lexemes nested according to #tags or ^tags."
   (let (parsed-lexemes
         lexeme)
-    (cl-loop while mst--remaining-lexemes do
-             (setq lexeme (pop mst--remaining-lexemes))
-             (cond
-              ((mst--open-section-p lexeme)
-               ;; recurse on this nested section
-               (push (cons lexeme (mst--parse-inner (mst--section-name lexeme))) parsed-lexemes))
-              ((mst--close-section-p lexeme)
-               ;; this is the last tag in this section
-               (unless (equal section-name (mst--section-name lexeme))
-                 (error "Mismatched brackets: You closed a section with %s, but it wasn't open" section-name))
-               (push lexeme parsed-lexemes)
-               (cl-return))
-              (t
-               ;; this is just a tag in the current section
-               (push lexeme parsed-lexemes))))
-
+    (catch 'done
+      (while mst--remaining-lexemes
+        (setq lexeme (pop mst--remaining-lexemes))
+        (cond
+         ((mst--open-section-p lexeme)
+          ;; recurse on this nested section
+          (push (cons lexeme (mst--parse-inner (mst--section-name lexeme)))
+                parsed-lexemes))
+         ((mst--close-section-p lexeme)
+          ;; this is the last tag in this section
+          (unless (equal section-name (mst--section-name lexeme))
+            (error "Mismatched brackets: You closed a section with %s, but it wasn't open" section-name))
+          (push lexeme parsed-lexemes)
+          (throw 'done nil))
+         (t
+          ;; this is just a tag in the current section
+          (push lexeme parsed-lexemes)))))
+    
     ;; ensure we aren't inside an unclosed section
     (when (and section-name (not (mst--close-section-p lexeme)))
       (error "Unclosed section: You haven't closed %s" section-name))
