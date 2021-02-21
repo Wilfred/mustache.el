@@ -5,24 +5,28 @@ Targeting [v.1.0.2](https://github.com/mustache/spec/tree/v1.0.2) of Mustache.
 
 ## Example usage
 
-    (require 'mustache)
-    (require 'ht) ;; hash table library
+``` emacs-lisp
+(require 'mustache)
+(require 'ht) ;; hash table library
 
-    (let ((context (ht ("name" "J. Random user"))))
-      ;; evaluates to: "Hello J. Random user!"
-      (mustache-render "Hello {{name}}!" context))
+(let ((context (ht ("name" "J. Random user"))))
+  ;; evaluates to: "Hello J. Random user!"
+  (mustache-render "Hello {{name}}!" context))
+```
 
 ### (Optional) Without ht
 
 You're not forced to use `ht`, it's just an easier way of creating
 hash tables. You can use Emacs' reader syntax for hash tables instead:
       
-    (require 'mustache)
+``` emacs-lisp
+(require 'mustache)
 
-    (let ((context
-           #s(hash-table test equal data ("name" "J. Random user"))))
-      ;; evaluates to: "Hello J. Random user!"
-      (mustache-render "Hello {{name}}!" context))
+(let ((context
+       #s(hash-table test equal data ("name" "J. Random user"))))
+  ;; evaluates to: "Hello J. Random user!"
+  (mustache-render "Hello {{name}}!" context))
+```
 
 Note that hash tables default to using `eql` as the key comparison
 function. You must set it to `equal` since mustache.el uses hash
@@ -33,111 +37,137 @@ tables with string keys.
 You can use keywords in contexts, which allows you to skip setting the
 key comparison function.
 
-    (require 'mustache)
+``` emacs-lisp
+(require 'mustache)
 
-    (let ((mustache-key-type 'keyword)
-          (context
-           #s(hash-table data (:name "J. Random user"))))
-      ;; evaluates to: "Hello J. Random user!"
-      (mustache-render "Hello {{name}}!" context))
+(let ((mustache-key-type 'keyword)
+      (context
+       #s(hash-table data (:name "J. Random user"))))
+  ;; evaluates to: "Hello J. Random user!"
+  (mustache-render "Hello {{name}}!" context))
+```
 
 ## Implemented mustache features
 
 Basic variable interpolation:
 
-    (mustache-render
-     "Coded with {{language}}!"
-     (ht ("language" "elisp"))) ;; "Coded with elisp!"
+``` emacs-lisp
+(mustache-render
+ "Coded with {{language}}!"
+ (ht ("language" "elisp"))) ;; "Coded with elisp!"
+```
      
 Blocks with booleans:
 
-    (mustache-render
-     "{{#is-sunny}}Looks nice today.{{/is-sunny}}"
-     (ht ("is-sunny" t))) ;; "Looks nice today."
+``` emacs-lisp
+(mustache-render
+ "{{#is-sunny}}Looks nice today.{{/is-sunny}}"
+ (ht ("is-sunny" t))) ;; "Looks nice today."
 
-    (mustache-render
-     "{{#is-sunny}}Looks nice today.{{/is-sunny}}"
-     (ht ("is-sunny" nil))) ;; ""
+(mustache-render
+ "{{#is-sunny}}Looks nice today.{{/is-sunny}}"
+ (ht ("is-sunny" nil))) ;; ""
+```
      
 Blocks with hash tables:
 
-    (mustache-render
-     "{{#user}}{{name}}{{/user}}"
-     (ht ("user"
-          (ht ("name" "Wilfred"))))) ;; "Wilfred"
+``` emacs-lisp
+(mustache-render
+ "{{#user}}{{name}}{{/user}}"
+ (ht ("user"
+      (ht ("name" "Wilfred"))))) ;; "Wilfred"
+```
      
 Blocks with lists:
 
-    (mustache-render
-     "{{#some-list}}{{item}}{{/some-list}}"
-     (ht ("some-list"
-          (list
-           (ht ("item" "a"))
-           (ht ("item" "b"))
-           (ht ("item" "c")))))) ;; "abc"
+``` emacs-lisp
+(mustache-render
+ "{{#some-list}}{{item}}{{/some-list}}"
+ (ht ("some-list"
+      (list
+       (ht ("item" "a"))
+       (ht ("item" "b"))
+       (ht ("item" "c")))))) ;; "abc"
+```
 
 Inverted blocks:
 
-    (mustache-render
-     "{{^is-sunny}}Take an umbrella!{{/is-sunny}}"
-     (ht ("is-sunny" nil))) ;; "Take an umbrella!"
+``` emacs-lisp
+(mustache-render
+ "{{^is-sunny}}Take an umbrella!{{/is-sunny}}"
+ (ht ("is-sunny" nil))) ;; "Take an umbrella!"
 
-    (mustache-render
-     "{{^is-sunny}}Take an umbrella!{{/is-sunny}}"
-     (ht ("is-sunny" t))) ;; ""
+(mustache-render
+ "{{^is-sunny}}Take an umbrella!{{/is-sunny}}"
+ (ht ("is-sunny" t))) ;; ""
+```
 
 Mustache variables are escaped:
 
-    (mustache-render
-     "{{info}}"
-     (ht ("info" "<p>We use mustache</p>"))) ;; "&lt;p&gt;We use mustache&lt;/p&gt;"
+``` emacs-lisp
+(mustache-render
+ "{{info}}"
+ (ht ("info" "<p>We use mustache</p>"))) ;; "&lt;p&gt;We use mustache&lt;/p&gt;"
+```
 
 Unless explicitly marked as safe:
 
-    (mustache-render
-     "{{{info}}}"
-     (ht ("info" "<p>We use mustache</p>"))) ;; "<p>We use mustache</p>"
+``` emacs-lisp
+(mustache-render
+ "{{{info}}}"
+ (ht ("info" "<p>We use mustache</p>"))) ;; "<p>We use mustache</p>"
 
-    (mustache-render
-     "{{& info }}"
-     (ht ("info" "<p>We use mustache</p>"))) ;; "<p>We use mustache</p>"
+(mustache-render
+ "{{& info }}"
+ (ht ("info" "<p>We use mustache</p>"))) ;; "<p>We use mustache</p>"
+```
 
 Comments:
 
-    (mustache-render
-     "hello{{! world }}"
-     (ht)) ;; "hello"
+``` emacs-lisp
+(mustache-render
+ "hello{{! world }}"
+ (ht)) ;; "hello"
+```
 
 Partials:
 
-    ;; assuming ~/projects/mustache.el/test.mustache exists
-    ;; and contains "hello {{user}}"
-    (let ((mustache-partial-paths (list "~/projects/mustache.el")))
-      (mustache-render
-       "{{> test}}"
-       (ht ("user" "wilfred")))) ;; "hello wilfred"
+``` emacs-lisp
+;; assuming ~/projects/mustache.el/test.mustache exists
+;; and contains "hello {{user}}"
+(let ((mustache-partial-paths (list "~/projects/mustache.el")))
+  (mustache-render
+   "{{> test}}"
+   (ht ("user" "wilfred")))) ;; "hello wilfred"
+```
 
 Changing delimeters:
 
-    (mustache-render
-     "{{=<% %>=}}<% style %>"
-     (ht ("style" "ERB style!"))) ;; "ERB style!"
+``` emacs-lisp
+(mustache-render
+ "{{=<% %>=}}<% style %>"
+ (ht ("style" "ERB style!"))) ;; "ERB style!"
+```
 
 Lambdas:
 
-    (mustache-render
-     "{{#wrapped}}{{language}} is great.{{/wrapped}}"
-     (ht ("language" "elisp")
-         ("wrapped"
-          (lambda (template context)
-            (concat "<b>" (mustache-render template context) "</b>")))))
-    ;; "<b>elisp is great.</b>"
+``` emacs-lisp
+(mustache-render
+ "{{#wrapped}}{{language}} is great.{{/wrapped}}"
+ (ht ("language" "elisp")
+     ("wrapped"
+      (lambda (template context)
+        (concat "<b>" (mustache-render template context) "</b>")))))
+;; "<b>elisp is great.</b>"
+```
 
 Error checking on invalid sections:
 
-    (mustache-render
-     "{{#outer}}{{#inner}}mismatched!{{/outer}}{{/inner}}"
-     (ht)) ;; error "Mismatched brackets: You closed a section with inner, but it wasn't open"
+``` emacs-lisp
+(mustache-render
+ "{{#outer}}{{#inner}}mismatched!{{/outer}}{{/inner}}"
+ (ht)) ;; error "Mismatched brackets: You closed a section with inner, but it wasn't open"
+```
 
 ## Todo:
 
