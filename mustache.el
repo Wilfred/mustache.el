@@ -197,7 +197,7 @@ Note that the lexer converts {{{foo}}} to {{& foo}}."
   (equal (car lexeme) :text))
 
 ;; fixme: assumes the delimeters haven't changed
-;; fixme: mst--lex doens't preserve whitespace
+;; fixme: mst--lex doesn't preserve whitespace
 (defun mst--unlex (lexemes)
   "Given a lexed (and optionally parsed) list of LEXEMES,
 return the original input string."
