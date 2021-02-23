@@ -73,9 +73,6 @@ for 'keyword we expect contexts of the form:
 (defun mst--lex (template)
   "Iterate through TEMPLATE, splitting {{ tags }} and bare strings.
 We return a list of lists: ((:text \"foo\") (:tag \"variable-name\"))"
-  ;; convert {{{foo}}} to {{& foo}}
-  (setq template (replace-regexp-in-string "{{{\\(.*?\\)}}}" "{{& \\1}}" template))
-
   (let ((open-delimeter "{{")
         (close-delimeter "}}")
         (lexemes nil))
@@ -86,28 +83,37 @@ We return a list of lists: ((:text \"foo\") (:tag \"variable-name\"))"
         ;; todo: error if we have an open and no close
         (if (and open-index close-index)
             ;; we have a tag
-            (let ((between-delimeters
-                   (substring template (+ open-index (length open-delimeter)) close-index))
-                  (continue-from-index (+ close-index (length close-delimeter))))
-              ;; save the string before the tag
-              (when (> open-index 0)
-                (push (list :text (substring template 0 open-index)) lexemes))
+            (progn
+              ;; If we have a triple delimiter {{{foo}}}, we want to
+              ;; consider the inner content as "{foo}", so we need to
+              ;; increment the close index.
+              (when
+                  (and (< close-index (- (length template) 2))
+                       (eq (elt template (+ close-index 2)) ?\}))
+                (setq close-index (1+ close-index)))
+              
+              (let ((between-delimeters
+                     (substring template (+ open-index (length open-delimeter)) close-index))
+                    (continue-from-index (+ close-index (length close-delimeter))))
+                ;; save the string before the tag
+                (when (> open-index 0)
+                  (push (list :text (substring template 0 open-index)) lexemes))
 
-              ;; if this is a tag that changes delimeters e.g. {{=<< >>=}}
-              ;; then set the new open/close delimeter string
-              (if (s-matches-p "^=.+ .+=$" between-delimeters)
-                  (let* (;; strip leading/trailing =
-                         (delimeter-spec (substring between-delimeters 1 -1))
-                         (spec-parts (s-split " " delimeter-spec)))
-                    (setq open-delimeter (-first-item spec-parts))
-                    (setq close-delimeter (-second-item spec-parts)))
+                ;; if this is a tag that changes delimeters e.g. {{=<< >>=}}
+                ;; then set the new open/close delimeter string
+                (if (s-matches-p "^=.+ .+=$" between-delimeters)
+                    (let* (;; strip leading/trailing =
+                           (delimeter-spec (substring between-delimeters 1 -1))
+                           (spec-parts (s-split " " delimeter-spec)))
+                      (setq open-delimeter (-first-item spec-parts))
+                      (setq close-delimeter (-second-item spec-parts)))
 
-                ;; otherwise it's a normal tag, so save it
-                (push (list :tag (s-trim between-delimeters)) lexemes))
+                  ;; otherwise it's a normal tag, so save it
+                  (push (list :tag (s-trim between-delimeters)) lexemes))
 
-              ;; iterate on the remaining template
-              (setq template
-                    (substring template continue-from-index)))
+                ;; iterate on the remaining template
+                (setq template
+                      (substring template continue-from-index))))
           ;; else only plain text left
           (progn
             (push (list :text template) lexemes)
@@ -178,10 +184,14 @@ See also `mst--inverted-section-tag-p'."
        (s-starts-with-p "!" (-second-item lexeme))))
 
 (defun mst--unescaped-tag-p (lexeme)
-  "Is LEXEME an unescaped variable tag?
-Note that the lexer converts {{{foo}}} to {{& foo}}."
+  "Is LEXEME an unescaped variable tag?"
   (and (mst--tag-p lexeme)
-       (s-starts-with-p "&" (-second-item lexeme))))
+       (let ((text (-second-item lexeme)))
+         (or
+          (s-starts-with-p "&" text)
+          (and
+           (s-starts-with-p "{" text)
+           (s-ends-with-p "}" text))))))
 
 (defun mst--partial-tag-p (lexeme)
   "Is LEXEME a partial tag?"
@@ -306,6 +316,16 @@ Partials are searched for in `mustache-partial-paths'."
     (setq variable-name (intern (concat ":" variable-name))))
   (ht-get context variable-name default))
 
+(defun mst--tag-name (tag-text)
+  "Given a tag {{foo}}, {{& foo}} or {{{foo}}}, return \"foo\"."
+  (s-trim
+   (cond
+    ((s-starts-with-p "&" tag-text)
+     (substring tag-text 1))
+    ((and (s-starts-with-p "{" tag-text)
+          (s-ends-with-p "}" tag-text))
+     (substring tag-text 1 -1)))))
+
 (defun mst--render-tag (parsed-tag context)
   "Given PARSED-TAG, render it in hash table CONTEXT."
   (let ((inner-text (mst--tag-text parsed-tag)))
@@ -313,7 +333,7 @@ Partials are searched for in `mustache-partial-paths'."
      ((mst--comment-tag-p parsed-tag)
       "")
      ((mst--unescaped-tag-p parsed-tag)
-      (let ((variable-value (mst--context-get context (s-trim (substring inner-text 1)) "")))
+      (let ((variable-value (mst--context-get context (mst--tag-name inner-text) "")))
         (when (numberp variable-value)
           (setq variable-value (number-to-string variable-value)))
         variable-value))

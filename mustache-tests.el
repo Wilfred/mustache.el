@@ -199,6 +199,13 @@
       "<bar>"
       (mustache-render "{{{blah}}}" context)))))
 
+(ert-deftest mustache-test-triple-mustache-custom-delimiter ()
+  (let ((context (ht ("name" "wilfred"))))
+    (should
+     (equal
+      "{{{name}}}"
+      (mustache-render "{{=<< >>=}}{{{name}}}" context)))))
+
 (ert-deftest mustache-test-conditional-true ()
   (let ((context (ht ("yes" 't))))
     (should
