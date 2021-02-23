@@ -40,6 +40,12 @@
       "foo bar"
       (mustache-render "foo {{blah}}" context)))))
 
+(ert-deftest mustache-malformed-tag ()
+  "Don't crash if we have a malformed tag.
+Arguably we could error, but mustache generally errs on error
+tolerance, e.g. allowing missing variables."
+  (mustache-render "}} foo {{" (ht)))
+
 (ert-deftest mustache-test-variable-number ()
   (let ((context (ht ("blah" 2))))
     (should

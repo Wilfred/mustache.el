@@ -79,10 +79,10 @@ We return a list of lists: ((:text \"foo\") (:tag \"variable-name\"))"
     (while (not (s-equals? template ""))
       (let* ((open-index (s-index-of open-delimeter template))
              (close-index (s-index-of close-delimeter template)))
-        ;; todo: check open-index < close-index
         ;; todo: error if we have an open and no close
-        (if (and open-index close-index)
-            ;; we have a tag
+        (if (and open-index close-index
+                 (< open-index close-index))
+            ;; We have a well-formed tag.
             (progn
               ;; If we have a triple delimiter {{{foo}}}, we want to
               ;; consider the inner content as "{foo}", so we need to
