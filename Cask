@@ -1,6 +1,6 @@
 (source melpa)
 
-(package "mustache" "0.22" "a mustache templating library")
+(package-file "mustache.el")
 
 (depends-on "s" "1.3.0")
 (depends-on "dash" "1.2.0")
