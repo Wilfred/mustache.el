@@ -1,4 +1,4 @@
-# mustache.el
+# mustache.el [![Coverage Status](https://coveralls.io/repos/github/Wilfred/mustache.el/badge.svg)](https://coveralls.io/github/Wilfred/mustache.el)
 #### *a mustache templating library in Emacs Lisp*
 
 Targeting [v.1.0.2](https://github.com/mustache/spec/tree/v1.0.2) of Mustache.
