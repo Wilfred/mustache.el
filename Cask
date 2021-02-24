@@ -7,4 +7,6 @@
 (depends-on "ht" "0.9")
 
 (development
- (depends-on "ert"))
+ (depends-on "f")
+ (depends-on "ert-runner")
+ (depends-on "undercover"))

@@ -21,10 +21,19 @@ jobs:
         version: ${{ matrix.emacs_version }}
     - uses: conao3/setup-cask@master
 
-    - name: Run tests
-      if: matrix.allow_failure != true
-      run: 'make test'
+    - uses: actions/checkout@v2
+    - name: Test
+      env:
+        COVERALLS_FLAG_NAME: Emacs ${{ matrix.emacs_version }}
+        COVERALLS_PARALLEL: 1
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        cask install
+        cask exec ert-runner
 
-    - name: Run tests (allow failure)
-      if: matrix.allow_failure == true
-      run: 'make test || true'
+  finalize:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: test
+    steps:
+    - run: curl "https://coveralls.io/webhook?repo_name=$GITHUB_REPOSITORY&repo_token=${{ secrets.GITHUB_TOKEN }}" -d "payload[build_num]=$GITHUB_RUN_NUMBER&payload[status]=done"

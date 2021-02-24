@@ -184,7 +184,8 @@ Within Emacs:
 
 Or from a command line (you need Cask installed):
 
-    $ make test
+    $ cask
+    $ cask exec ert-runner
 
 ### Roadmap
 
