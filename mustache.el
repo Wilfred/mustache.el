@@ -153,7 +153,7 @@ list."
 
 (defun mst--tag-p (lexeme)
   "Is LEXEME a tag?"
-  (equal (car lexeme) :tag))
+  (eq (car lexeme) :tag))
 
 (defun mst--section-tag-p (lexeme)
   "Is LEXEME a section tag?"
@@ -204,7 +204,7 @@ See also `mst--inverted-section-tag-p'."
 
 (defun mst--text-p (lexeme)
   "Is LEXEME plain text?"
-  (equal (car lexeme) :text))
+  (eq (car lexeme) :text))
 
 ;; fixme: assumes the delimeters haven't changed
 ;; fixme: mst--lex doesn't preserve whitespace
@@ -269,7 +269,7 @@ return the original input string."
 (defun mst--open-section-p (lexeme)
   "Is LEXEME a #tag or ^tag ?"
   (-let [(type value) lexeme]
-    (and (equal type :tag)
+    (and (eq type :tag)
          (or
           (s-starts-with-p "#" value)
           (s-starts-with-p "^" value)))))
@@ -277,7 +277,7 @@ return the original input string."
 (defun mst--close-section-p (lexeme)
   "Is LEXEME a /tag ?"
   (-let [(type value) lexeme]
-    (and (equal type :tag)
+    (and (eq type :tag)
          (s-starts-with-p "/" value))))
 
 ;;; Rendering 
