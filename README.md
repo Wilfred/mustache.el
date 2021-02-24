@@ -176,14 +176,6 @@ Error checking on invalid sections:
 * Whitespace (in)sensitivity for windows newlines
 * Run full specification test suite
 
-## Developing mustache.el
-
-mustache.el is broken up into several files, using `load` to import
-them. If you have a checked-out copy of mustache.el, you will need to
-do:
-
-    (add-to-list 'load-path "~/projects/mustache.el/")
-      
 ### Running tests
 
 Within Emacs:
