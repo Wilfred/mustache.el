@@ -188,8 +188,7 @@ tolerance, e.g. allowing missing variables."
        (mustache-render "{{#blah}}{{/foo}}" context)))))
 
 (ert-deftest mustache-test-variable-escaped ()
-  (let ((contexts (list (ht ("blah" "<bar> &baz ' \""))
-                        #s(hash-table test equal data ("blah" "<bar> &baz ' \""))
+  (let ((contexts (list #s(hash-table test equal data ("blah" "<bar> &baz ' \""))
                         '(("blah" . "<bar> &baz ' \"")))))
     (dolist (context contexts)
       (should
