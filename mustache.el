@@ -5,7 +5,7 @@
 ;; Author: Wilfred Hughes <me@wilfred.me.uk>
 ;; Version: 0.24
 ;; Keywords: convenience mustache template
-;; Package-Requires: ((ht "0.9") (s "1.3.0") (dash "1.2.0"))
+;; Package-Requires: ((emacs "26") (s "1.3.0") (dash "1.2.0"))
 ;; URL: https://github.com/Wilfred/mustache.el
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@
 ;;; Code:
 
 (require 's)
-(require 'ht)
+(require 'map)
 (require 'dash)
 (require 'cl-lib)
 
@@ -314,7 +314,16 @@ Partials are searched for in `mustache-partial-paths'."
   "Lookup VARIABLE-NAME in CONTEXT, returning DEFAULT if not present."
   (when (eq mustache-key-type 'keyword)
     (setq variable-name (intern (concat ":" variable-name))))
-  (ht-get context variable-name default))
+  ;; Work around incompatibility between Emacs versions: alist lookup
+  ;; are tested with `equal' starting from Emacs 28, `eq' before.
+  ;; Branch on version rather than forcing test function for all
+  ;; versions since the argument specifying the test function is
+  ;; deprecated and might disappear.
+  (if (and (version< emacs-version "28")
+           (listp context)
+           (not (mst--plist-p context)))
+      (map-elt context variable-name default 'equal)
+    (map-elt context variable-name default)))
 
 (defun mst--tag-name (tag-text)
   "Given a tag {{foo}}, {{& foo}} or {{{foo}}}, return \"foo\"."
@@ -350,8 +359,18 @@ Partials are searched for in `mustache-partial-paths'."
 
 (defun mst--context-add (table from-table)
   "Return a copy of TABLE where all the key-value pairs in FROM-TABLE have been set."
-  (let ((new-table (ht-copy table)))
-    (ht-update new-table from-table)
+  (let ((new-table (map-copy table)))
+    (map-do (lambda (k v)
+              (if (and (version< emacs-version "28")
+                       (not (listp new-table)))
+                  ;; Work around incompatibility between Emacs versions:
+                  ;; `map-insert' does not work with non-lists before
+                  ;; Emacs 28.
+                  (map-put! new-table k v)
+                ;; `setq' + `map-insert' is more expensive than `map-put!', but
+                ;; `map-put!' appears not to work with alists
+                (setq new-table (map-insert new-table k v))))
+            from-table)
     new-table))
 
 (defun mst--listp (object)
@@ -381,14 +400,14 @@ render it in CONTEXT."
             ((mst--open-section-tag-p section-tag)
              (cond
               ;; if the context is a list of hash tables, render repeatedly
-              ((or (mst--listp context-value) (vectorp context-value))
+              ((mst--sequence-of-maps-p context-value)
                (s-join
                 ""
                 (--map
                  (mst--render-section-list section-contents (mst--context-add context it))
                  context-value)))
               ;; if the context is a hash table, render in that context
-              ((hash-table-p context-value)
+              ((mst--map-p context-value)
                (mst--render-section-list section-contents (mst--context-add context context-value)))
               ;; if the context is a function, call it
               ((functionp context-value)
@@ -417,6 +436,30 @@ render it in CONTEXT."
        (s-replace ">" "&gt;")
        (s-replace "'" "&#39;")
        (s-replace "\"" "&quot;")))
+
+(defun mst--sequence-of-maps-p (object)
+  "Return t if OBJECT is a sequence of maps."
+  (and
+   (not (mst--strict-cons-p object))
+   (not (functionp object))
+   (or (and (listp object)
+            (mst--map-p (car object)))
+       (and (vectorp object)
+            (mst--map-p (aref object 0))))))
+
+(defun mst--strict-cons-p (object)
+  "Return t if OBJECT is a strict cons cell (i.e. not a list)."
+  (and (consp object)
+       (not (listp (cdr object)))))
+
+(defsubst mst--plist-p (list)
+  (and (consp list) (atom (car list))))
+
+(defun mst--map-p (object)
+  "Return t if OBJECT is a map."
+  (and (not (functionp object))
+       (not (mst--strict-cons-p object))
+       (mapp object)))
 
 (provide 'mustache)
 ;;; mustache.el ends here
